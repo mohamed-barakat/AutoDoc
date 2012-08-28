@@ -136,3 +136,10 @@ Versions:
 test_suite/: 4543aed also catch changes to to be committed
 
 Versions:
+
+ToolsForHomalg/: e98b430 missing renames AutomaticDocumentation* -> AutoDoc*
+
+Versions:
+2011.09.12 which is Markus' version
+2012.08.26 which is Mohamed's version
+2012.08.01 which is Sebas' version
