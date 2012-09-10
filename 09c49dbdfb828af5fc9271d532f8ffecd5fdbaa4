@@ -64,3 +64,9 @@ IO_ForHomalg/: 649f07b added Sebastian Gutsche as author
 
 Versions:
  2012.05.24
+
+LessGenerators/: 7cf8275 declared and installed SuslinLemma for [ IsHomalgRingElement, IsHomalgRingElement, IsInt ]
+
+Versions:
+2010.07.02 which is Mohamed's version
+2010.04.04 which is Vinay's version
