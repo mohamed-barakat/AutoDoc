@@ -31,3 +31,11 @@ GaussForHomalg/: 8c55fb0 RP!.ImportMatrix( One( M ), R!.ring ) -> RP!.ImportMatr
 
 Versions:
  2012.08.29
+
+GradedModules/: 6829e5c installed DefiningIdeal for [ IsHomalgGradedRingRep and HasRingRelations ]
+
+Versions:
+2011.09.06 which is Markus' version
+2012.06.24 which is Mohamed's version
+2011.05.05 which is Sebastian's version
+2012.06.15 which is Sebas' version
