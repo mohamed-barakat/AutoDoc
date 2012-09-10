@@ -26,3 +26,8 @@ Gauss/: 39e4a85 Merge pull request #7 from sebasguts/master
 
 Versions:
  2012.04.23
+
+GaussForHomalg/: 8c55fb0 RP!.ImportMatrix( One( M ), R!.ring ) -> RP!.ImportMatrix( M, R )
+
+Versions:
+ 2012.08.29
