@@ -70,3 +70,9 @@ LessGenerators/: 7cf8275 declared and installed SuslinLemma for [ IsHomalgRingEl
 Versions:
 2010.07.02 which is Mohamed's version
 2010.04.04 which is Vinay's version
+
+LetterPlace/: 3b44fac deleted the obsolete declaration of Indeterminates
+
+Versions:
+2011.11.16 which is Max' version
+2011.11.16 which is Mohamed's version
