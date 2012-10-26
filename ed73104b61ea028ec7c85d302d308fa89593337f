@@ -32,3 +32,8 @@ Convex/: 5bac1a5 Redfined labels for documentations.
 
 Versions:
 2012.10.26 which is Sebas' version
+
+D-Modules/: 7df6283 comply with the new GAPDoc testing methods
+
+Versions:
+ 2012.06.28
