@@ -190,3 +190,9 @@ ToricVarieties/: 3ea286e Added a clean file.
 
 Versions:
 2012.10.22 which is Sebas' version
+
+VirtualCAS/: 43f3cd2 comply with the new GAPDoc testing methods
+
+Versions:
+2011.05.20 which is Andreas' version
+2012.09.21 which is Mohamed's version
