@@ -155,3 +155,9 @@ SCSCP_ForHomalg/: a41318f comply with the new GAPDoc testing methods
 
 Versions:
  2011.12.17
+
+Sheaves/: e7100d7 declared missing IsSheafOfRingsOrSheafOnSchemeRep
+
+Versions:
+2011.08.21 which is Markus' version
+2012.10.25 which is Mohamed's version
