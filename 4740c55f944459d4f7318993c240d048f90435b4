@@ -141,3 +141,12 @@ PolymakeInterface/: 799342f Added polymake sources.
 
 Versions:
 2012.12.11 which is Sebas' version
+
+RingsForHomalg/: 28e561a HomalgCyclotomicFieldInMAGMA now passes the root name correctly to MAGMA
+
+Versions:
+2011.09.12 which is Markus L-H's version
+2011.06.16 which is Markus K's version
+2012.12.12 which is Mohamed's version
+2011.12.13 which is Andreas's version
+2012.12.11 which is Sebas' version
