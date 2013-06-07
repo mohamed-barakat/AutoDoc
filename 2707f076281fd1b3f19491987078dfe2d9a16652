@@ -115,3 +115,10 @@ MapleForHomalg/: 79f1ad9 Merge pull request #1 from fingolfin/patch-1
 
 Versions:
  2011.07.25
+
+MatricesForHomalg/: 438c2fc declared and installed CoefficientOfUnivariatePolynomial
+
+Versions:
+2011.12.05 which is Markus' version
+2013.05.27 which is Mohamed's version
+2012.10.17 which is Sebas' version
