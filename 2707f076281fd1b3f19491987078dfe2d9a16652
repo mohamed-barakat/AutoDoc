@@ -122,3 +122,12 @@ Versions:
 2011.12.05 which is Markus' version
 2013.05.27 which is Mohamed's version
 2012.10.17 which is Sebas' version
+
+Modules/: a87334b fixed PrimaryDecompositionOp and RadicalDecompositionOp for zero ideals
+
+Versions:
+2013.05.25 which is Mohamed's version
+2012.10.22 which is Markus' version
+2011.07.20 which is Florian's version
+2013.04.12 which is Sebas' version
+2013.05.05 which is Sepp's version
