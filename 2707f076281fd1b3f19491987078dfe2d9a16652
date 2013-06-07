@@ -76,3 +76,8 @@ Versions:
 2013.06.03 which is Mohamed's version
 2012.09.17 which is Markus' version
 2012.03.29 which is Sebas' version
+
+HomalgToCAS/: 176717e take CTRL-C into account
+
+Versions:
+ 2013.02.22
