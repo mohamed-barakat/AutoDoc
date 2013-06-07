@@ -42,3 +42,8 @@ ExamplesForHomalg/: 81371c7 W  PackageDoc.Archive is withdrawn, use PackageDoc.A
 
 Versions:
  2012.10.23
+
+Gauss/: 6101678 increased version number after Max H.'s commit
+
+Versions:
+ 2013.03.07
