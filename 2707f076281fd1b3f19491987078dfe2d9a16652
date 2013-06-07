@@ -104,3 +104,9 @@ LetterPlace/: 6260b62 comply with the new GAPDoc testing methods
 Versions:
 2011.11.16 which is Max' version
 2012.09.21 which is Mohamed's version
+
+LocalizeRingForHomalg/: 6f54ab2 W  PackageDoc.Archive is withdrawn, use PackageDoc.ArchiveURLSubset instead
+
+Versions:
+2011.04.26 which is Markus' version
+2012.10.26 which is Mohamed's version
