@@ -159,3 +159,9 @@ SCSCP_ForHomalg/: a41318f comply with the new GAPDoc testing methods
 
 Versions:
  2011.12.17
+
+Sheaves/: e9a57db renamed BettiDiagram -> BettiTable
+
+Versions:
+2011.08.21 which is Markus' version
+2013.06.03 which is Mohamed's version
