@@ -165,3 +165,8 @@ Sheaves/: e9a57db renamed BettiDiagram -> BettiTable
 Versions:
 2011.08.21 which is Markus' version
 2013.06.03 which is Mohamed's version
+
+SimplicialObjects/: 0c5dbd4 comply with the new GAPDoc testing methods
+
+Versions:
+ 2011.06.29
