@@ -12,3 +12,8 @@ alexander/: 759f8c2 updated manual.css
 
 Versions:
  2012.10.22
+
+AutoDoc/: 2707f07 Switched arguments for InstallMethodWithDocumentation
+
+Versions:
+2013.06.07 which is Sebas' version
