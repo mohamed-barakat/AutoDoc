@@ -82,3 +82,8 @@ Versions:
 2013.06.03 which is Mohamed's version
 2012.09.17 which is Markus' version
 2012.03.29 which is Sebas' version
+
+HomalgToCAS/: 2b51d77 HomalgExternalRingElement now converts strings to functions
+
+Versions:
+ 2013.06.18
