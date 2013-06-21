@@ -87,3 +87,8 @@ HomalgToCAS/: 2b51d77 HomalgExternalRingElement now converts strings to function
 
 Versions:
  2013.06.18
+
+IO_ForHomalg/: a45abd8 updated manual.css
+
+Versions:
+ 2012.10.22
