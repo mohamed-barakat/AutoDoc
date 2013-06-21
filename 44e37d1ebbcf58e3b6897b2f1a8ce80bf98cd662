@@ -129,3 +129,12 @@ Versions:
 2013.06.12 which is Mohamed's version
 2012.10.17 which is Sebas' version
 2013.06.01 which is Vinay's version
+
+Modules/: 6b326bd homalg generators now support a component ConvertTransitionMatrix
+
+Versions:
+2013.06.06 which is Mohamed's version
+2012.10.22 which is Markus' version
+2011.07.20 which is Florian's version
+2013.04.12 which is Sebas' version
+2013.05.05 which is Sepp's version
