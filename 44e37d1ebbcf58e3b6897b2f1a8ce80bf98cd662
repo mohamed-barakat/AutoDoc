@@ -12,3 +12,8 @@ alexander/: 759f8c2 updated manual.css
 
 Versions:
  2012.10.22
+
+AutoDoc/: 44e37d1 Fixed bug with too long hash values.
+
+Versions:
+2013.06.07 which is Sebas' version
