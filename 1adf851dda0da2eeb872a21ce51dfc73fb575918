@@ -87,3 +87,8 @@ HomalgToCAS/: cb04628 enhanced InitializeMacros to invoke functions in macro-rec
 
 Versions:
  2013.06.21
+
+IO_ForHomalg/: a45abd8 updated manual.css
+
+Versions:
+ 2012.10.22
