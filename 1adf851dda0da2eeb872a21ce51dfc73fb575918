@@ -82,3 +82,8 @@ Versions:
 2013.06.23 which is Mohamed's version
 2012.09.17 which is Markus' version
 2012.03.29 which is Sebas' version
+
+HomalgToCAS/: cb04628 enhanced InitializeMacros to invoke functions in macro-records
+
+Versions:
+ 2013.06.21
