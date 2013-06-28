@@ -10,3 +10,7 @@
 #############################################################################
 
 #ReadPackage( "AutoDoc", "gap/InstallMethodWithDocumentation.gi" );
+
+ReadPackage( "AutoDoc", "gap/CreateDocumentationEntries.gi" );
+
+ReadPackage( "AutoDoc", "gap/ToolFunctions.gi" );
