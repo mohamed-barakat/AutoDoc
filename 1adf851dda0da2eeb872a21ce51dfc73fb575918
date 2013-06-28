@@ -38,3 +38,8 @@ Convex/: 46ecd91 Added some fixes for polyhedrons.
 
 Versions:
 2013.02.26 which is Sebas' version
+
+D-Modules/: fb87df6 removed the yet obsolete examples.xml file
+
+Versions:
+ 2013.04.16
