@@ -14,9 +14,9 @@ InstallGlobalFunction( CreateDocEntryForCategory,
                        
   function( arg )
     local name, tester, description, arguments, chapter_info,
-          tester_names, i, j, label_rand_hash, doc_stream;
+          tester_names, i, j, label_rand_hash, doc_stream, grouping, is_grouped, option_record, label_list;
     
-    if Length( arg ) <> 3 and Length( arg ) <> 4 and Length( arg ) <> 5 then
+    if Length( arg ) <> 3 and Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 then
         
         Error( "the method CreateDocEntryForCategory must be called with 3, 4 or 5 arguments\n" );
         
@@ -29,6 +29,36 @@ InstallGlobalFunction( CreateDocEntryForCategory,
     tester := arg[ 2 ];
     
     if AUTOMATIC_DOCUMENTATION.enable_documentation then
+        
+        option_record := arg[ Length( arg ) ];
+        
+        if not IsRecord( option_record ) then
+            
+            option_record := rec( );
+            
+        else
+            
+            arg := arg{[ 1 .. Length( arg ) - 1 ]};
+            
+        fi;
+        
+        if IsBound( option_record.group ) then
+            
+            is_grouped := true;
+            
+            grouping := option_record.group;
+            
+            if not IsString( grouping ) then
+                
+                Error( "group name must be a string." );
+                
+            fi;
+            
+        else
+            
+            is_grouped := false;
+            
+        fi;
         
         description := arg[ 3 ];
         
@@ -100,21 +130,58 @@ InstallGlobalFunction( CreateDocEntryForCategory,
             
         fi;
         
-        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] }, String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        label_list := [ ];
         
-        doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
-        
-        AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Filt", arguments, name, tester_names, "<C>true</C> or <C>false</C>", description );
-        
-        if not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]) ) 
-           or not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]) ) then
+        if IsBound( option_record.label ) and IsString( option_record.label ) then
             
-            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            label_list := [ option_record.label ];
             
         fi;
         
-        AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
-                  "<#Include Label=\"", label_rand_hash, "\">\n" );
+        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] },
+                                          String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        
+        if is_grouped and not IsBound( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) ) then
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) := rec( elements := [ ],
+                                                                          description := [ ],
+                                                                          label_rand_hash := label_rand_hash,
+                                                                          chapter_info := chapter_info,
+                                                                          return_value := "",
+                                                                          label_list := label_list,
+                                                                         );
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        elif not is_grouped then
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        fi;
+        
+        if is_grouped then
+            
+            Add( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).elements, [ "Filt", arguments, name, tester_names ] );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description, description );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).return_value := "<C>true</C> or <C>false</C>";
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list, label_list );
+            
+        else
+            
+            doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
+            
+            AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Filt", arguments, name, tester_names, "<C>true</C> or <C>false</C>", description, label_list );
+            
+        fi;
         
     fi;
     
@@ -128,9 +195,9 @@ InstallGlobalFunction( CreateDocEntryForRepresentation,
 
   function( arg )
     local name, tester, req_entries, description, arguments, chapter_info,
-          tester_names, i, j, label_rand_hash, doc_stream;
+          tester_names, i, j, label_rand_hash, doc_stream, grouping, is_grouped, option_record, label_list;
     
-    if Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 then
+    if Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 and Length( arg ) <> 7 then
         
         Error( "the method DeclareCategoryWithDocumentation must be called with 4, 5 or 6 arguments\n" );
         
@@ -145,6 +212,36 @@ InstallGlobalFunction( CreateDocEntryForRepresentation,
     req_entries := arg[ 3 ];
     
     if AUTOMATIC_DOCUMENTATION.enable_documentation then
+        
+        option_record := arg[ Length( arg ) ];
+        
+        if not IsRecord( option_record ) then
+            
+            option_record := rec( );
+            
+        else
+            
+            arg := arg{[ 1 .. Length( arg ) - 1 ]};
+            
+        fi;
+        
+        if IsBound( option_record.group ) then
+            
+            is_grouped := true;
+            
+            grouping := option_record.group;
+            
+            if not IsString( grouping ) then
+                
+                Error( "group name must be a string." );
+                
+            fi;
+            
+        else
+            
+            is_grouped := false;
+            
+        fi;
         
         description := arg[ 4 ];
         
@@ -216,21 +313,59 @@ InstallGlobalFunction( CreateDocEntryForRepresentation,
             
         fi;
         
-        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] }, String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        label_list := [ ];
         
-        doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
-        
-        AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Filt", arguments, name, tester_names, "<C>true</C> or <C>false</C>", description );
-        
-        if not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]) ) 
-           or not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]) ) then
+        if IsBound( option_record.label ) and IsString( option_record.label ) then
             
-            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            label_list := [ option_record.label ];
             
         fi;
         
-        AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
-                  "<#Include Label=\"", label_rand_hash, "\">\n" );
+        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] },
+                                          String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        
+        if is_grouped and not IsBound( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) ) then
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) := rec( elements := [ ],
+                                                                          description := [ ],
+                                                                          label_rand_hash := label_rand_hash,
+                                                                          chapter_info := chapter_info,
+                                                                          return_value := "",
+                                                                          label_list := label_list,
+                                                                         );
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+            
+        elif not is_grouped then
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        fi;
+        
+        if is_grouped then
+            
+            Add( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).elements, [ "Filt", arguments, name, tester_names ] );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description, description );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).return_value := "<C>true</C> or <C>false</C>";
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list, label_list );
+            
+        else
+            
+            doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
+            
+            AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Filt", arguments, name, tester_names, "<C>true</C> or <C>false</C>", description, label_list );
+            
+        fi;
         
     fi;
     
@@ -243,9 +378,9 @@ InstallGlobalFunction( CreateDocEntryForOperation,
 
   function( arg )
     local name, tester, description, return_value, arguments, chapter_info,
-          tester_names, i, j, label_rand_hash, doc_stream;
+          tester_names, i, j, label_rand_hash, doc_stream, grouping, is_grouped, option_record, label_list;
     
-    if Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 then
+    if Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 and Length( arg ) <> 7 then
         
         Error( "the method CreateDocEntryForOperation must be called with 4, 5, or 6 arguments\n" );
         
@@ -258,6 +393,36 @@ InstallGlobalFunction( CreateDocEntryForOperation,
     tester := arg[ 2 ];
     
     if AUTOMATIC_DOCUMENTATION.enable_documentation then
+        
+        option_record := arg[ Length( arg ) ];
+        
+        if not IsRecord( option_record ) then
+            
+            option_record := rec( );
+            
+        else
+            
+            arg := arg{[ 1 .. Length( arg ) - 1 ]};
+            
+        fi;
+        
+        if IsBound( option_record.group ) then
+            
+            is_grouped := true;
+            
+            grouping := option_record.group;
+            
+            if not IsString( grouping ) then
+                
+                Error( "group name must be a string." );
+                
+            fi;
+            
+        else
+            
+            is_grouped := false;
+            
+        fi;
         
         description := arg[ 3 ];
         
@@ -344,21 +509,58 @@ InstallGlobalFunction( CreateDocEntryForOperation,
         
         tester_names := JoinStringsWithSeparator( tester_names, ", " );
         
-        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] }, String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        label_list := [ ];
         
-        doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
-        
-        AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Oper", arguments, name, tester_names, return_value, description );
-        
-        if not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]) ) 
-           or not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]) ) then
+        if IsBound( option_record.label ) and IsString( option_record.label ) then
             
-            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            label_list := [ option_record.label ];
             
         fi;
         
-        AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
-                  "<#Include Label=\"", label_rand_hash, "\">\n" );
+        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] },
+                                          String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        
+        if is_grouped and not IsBound( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) ) then
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) := rec( elements := [ ],
+                                                                          description := [ ],
+                                                                          label_rand_hash := label_rand_hash,
+                                                                          chapter_info := chapter_info,
+                                                                          return_value := "",
+                                                                          label_list := label_list,
+                                                                         );
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        elif not is_grouped then
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        fi;
+        
+        if is_grouped then
+            
+            Add( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).elements, [ "Oper", arguments, name, tester_names ] );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description, description );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).return_value := return_value;
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list, label_list );
+            
+        else
+            
+            doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
+            
+            AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Oper", arguments, name, tester_names, return_value, description, label_list );
+        
+        fi;
         
     fi;
     
@@ -372,9 +574,9 @@ InstallGlobalFunction( CreateDocEntryForAttribute,
 
   function( arg )
     local name, tester, description, return_value, arguments, chapter_info,
-          tester_names, i, j, label_rand_hash, doc_stream;
+          tester_names, i, j, label_rand_hash, doc_stream, grouping, is_grouped, option_record, label_list;
     
-    if Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 then
+    if Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 6 and Length( arg ) <> 7 then
         
         Error( "the method CreateDocEntryWithAttribute must be called with 4 or 5 arguments\n" );
         
@@ -399,6 +601,36 @@ InstallGlobalFunction( CreateDocEntryForAttribute,
     fi;
     
     if AUTOMATIC_DOCUMENTATION.enable_documentation then
+        
+        option_record := arg[ Length( arg ) ];
+        
+        if not IsRecord( option_record ) then
+            
+            option_record := rec( );
+            
+        else
+            
+            arg := arg{[ 1 .. Length( arg ) - 1 ]};
+            
+        fi;
+        
+        if IsBound( option_record.group ) then
+            
+            is_grouped := true;
+            
+            grouping := option_record.group;
+            
+            if not IsString( grouping ) then
+                
+                Error( "group name must be a string." );
+                
+            fi;
+            
+        else
+            
+            is_grouped := false;
+            
+        fi;
         
         description := arg[ 3 ];
         
@@ -474,21 +706,58 @@ InstallGlobalFunction( CreateDocEntryForAttribute,
             
         fi;
         
-        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] }, String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        label_list := [ ];
         
-        doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
-        
-        AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Attr", arguments, name, tester_names, return_value, description );
-        
-        if not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]) ) 
-           or not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]) ) then
+        if IsBound( option_record.label ) and IsString( option_record.label ) then
             
-            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            label_list := [ option_record.label ];
             
         fi;
         
-        AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
-                  "<#Include Label=\"", label_rand_hash, "\">\n" );
+        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] },
+                                          String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        
+        if is_grouped and not IsBound( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) ) then
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) := rec( elements := [ ],
+                                                                          description := [ ],
+                                                                          label_rand_hash := label_rand_hash,
+                                                                          chapter_info := chapter_info,
+                                                                          return_value := "",
+                                                                          label_list := label_list,
+                                                                         );
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        elif not is_grouped then
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        fi;
+        
+        if is_grouped then
+            
+            Add( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).elements, [ "Attr", arguments, name, tester_names ] );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description, description );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).return_value := return_value;
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list, label_list );
+            
+        else
+            
+            doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
+            
+            AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Attr", arguments, name, tester_names, return_value, description, label_list );
+        
+        fi;
         
     fi;
     
@@ -496,13 +765,14 @@ InstallGlobalFunction( CreateDocEntryForAttribute,
     
 end );
 
+##
 InstallGlobalFunction( CreateDocEntryForProperty,
 
   function( arg )
     local name, tester, description, arguments, chapter_info,
-          tester_names, i, j, label_rand_hash, doc_stream;
+          tester_names, i, j, label_rand_hash, doc_stream, grouping, is_grouped, option_record, label_list;
     
-    if Length( arg ) <> 3 and Length( arg ) <> 4 and Length( arg ) <> 5 then
+    if Length( arg ) <> 3 and Length( arg ) <> 4 and Length( arg ) <> 5 and Length( arg ) <> 7 then
         
         Error( "the method CreateDocEntryWithProperty must be called with 3, 4, or 5 arguments\n" );
         
@@ -515,6 +785,36 @@ InstallGlobalFunction( CreateDocEntryForProperty,
     tester := arg[ 2 ];
     
     if AUTOMATIC_DOCUMENTATION.enable_documentation then
+        
+        option_record := arg[ Length( arg ) ];
+        
+        if not IsRecord( option_record ) then
+            
+            option_record := rec( );
+            
+        else
+            
+            arg := arg{[ 1 .. Length( arg ) - 1 ]};
+            
+        fi;
+        
+        if IsBound( option_record.group ) then
+            
+            is_grouped := true;
+            
+            grouping := option_record.group;
+            
+            if not IsString( grouping ) then
+                
+                Error( "group name must be a string." );
+                
+            fi;
+            
+        else
+            
+            is_grouped := false;
+            
+        fi;
         
         description := arg[ 3 ];
         
@@ -586,21 +886,58 @@ InstallGlobalFunction( CreateDocEntryForProperty,
             
         fi;
         
-        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] }, String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        label_list := [ ];
         
-        doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
-        
-        AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Prop", arguments, name, tester_names, "<C>true</C> or <C>false</C>", description );
-        
-        if not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]) ) 
-           or not IsBound( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]) ) then
+        if IsBound( option_record.label ) and IsString( option_record.label ) then
             
-            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            label_list := [ option_record.label ];
             
         fi;
         
-        AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
-                  "<#Include Label=\"", label_rand_hash, "\">\n" );
+        label_rand_hash := Concatenation( [ name{ [ 1 .. Minimum( Length( name ), SizeScreen( )[ 1 ] - LogInt( AUTOMATIC_DOCUMENTATION.random_value, 10 ) -22 ) ] },
+                                          String( Random( 0, AUTOMATIC_DOCUMENTATION.random_value ) ) ] );
+        
+        if is_grouped and not IsBound( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) ) then
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping) := rec( elements := [ ],
+                                                                          description := [ ],
+                                                                          label_rand_hash := label_rand_hash,
+                                                                          chapter_info := chapter_info,
+                                                                          return_value := "",
+                                                                          label_list := label_list,
+                                                                         );
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        elif not is_grouped then
+            
+            CreateNewSectionXMLFile( chapter_info[ 1 ], chapter_info[ 2 ] );
+            
+            AppendTo( AUTOMATIC_DOCUMENTATION.documentation_headers.(chapter_info[ 1 ]).sections.(chapter_info[ 2 ]),
+                      "<#Include Label=\"", label_rand_hash, "\">\n" );
+            
+        fi;
+        
+        if is_grouped then
+            
+            Add( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).elements, [ "Prop", arguments, name, tester_names ] );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).description, description );
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).return_value := "<C>true</C> or <C>false</C>";
+            
+            AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list := Concatenation( AUTOMATIC_DOCUMENTATION.grouped_items.(grouping).label_list, label_list );
+            
+        else
+            
+            doc_stream := AUTOMATIC_DOCUMENTATION.documentation_stream;
+            
+            AutoDoc_WriteEntry( doc_stream, label_rand_hash, "Prop", arguments, name, tester_names, "<C>true</C> or <C>false</C>", description, label_list );
+            
+        fi;
         
     fi;
     
