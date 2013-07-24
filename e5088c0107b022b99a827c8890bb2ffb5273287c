@@ -12,3 +12,8 @@ alexander/: 759f8c2 updated manual.css
 
 Versions:
  2012.10.22
+
+AutoDoc/: e5088c0 Bugfix for intro strings.
+
+Versions:
+2013.07.16 which is Sebas' version
