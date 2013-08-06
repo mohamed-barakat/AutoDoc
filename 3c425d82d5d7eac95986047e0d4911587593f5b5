@@ -93,3 +93,8 @@ Versions:
 2013.07.02 which is Mohamed's version
 2012.09.17 which is Markus' version
 2012.03.29 which is Sebas' version
+
+HomalgToCAS/: 23a37e2 fixed a copy/paste bug in previous commit
+
+Versions:
+ 2013.07.16
