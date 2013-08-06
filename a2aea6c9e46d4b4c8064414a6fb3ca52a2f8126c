@@ -64,3 +64,8 @@ Gauss/: fe16dd8 improved EchelonMatTransformationDestructive to take care of GF(
 
 Versions:
  2013.06.26
+
+GaussForHomalg/: b9aec2e replaced GetListListOfHomalgMatrixAsString by GetListListOfStringsOfHomalgMatrix
+
+Versions:
+ 2013.06.26
