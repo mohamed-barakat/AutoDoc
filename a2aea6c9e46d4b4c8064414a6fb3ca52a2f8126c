@@ -178,3 +178,9 @@ SCSCP_ForHomalg/: a41318f comply with the new GAPDoc testing methods
 
 Versions:
  2011.12.17
+
+Sheaves/: ca0c9c8 a hack for Thomas Bächler to support affine schemes
+
+Versions:
+2011.08.21 which is Markus' version
+2013.08.05 which is Mohamed's version
