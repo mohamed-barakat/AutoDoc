@@ -55,3 +55,7 @@ ExamplesForHomalg/: 81371c7 W  PackageDoc.Archive is withdrawn, use PackageDoc.A
 
 Versions:
  2012.10.23
+
+ForgetfulFunctor/: fcac07e t := TateResolution( Cokernel( mu0 ), -4, 6 );
+
+Versions:
