@@ -98,3 +98,8 @@ HomalgToCAS/: 23a37e2 fixed a copy/paste bug in previous commit
 
 Versions:
  2013.07.16
+
+IO_ForHomalg/: 6ef8f31 improved Subtitle/LongTitle
+
+Versions:
+ 2012.10.24
