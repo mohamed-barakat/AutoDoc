@@ -115,3 +115,9 @@ LessGenerators/: 4ac733c ~/public_html/LessGenerators -> ~/Sites/homalg-project/
 Versions:
 2013.07.21 which is Mohamed's version
 2013.07.20 which is Vinay's version
+
+LetterPlace/: 6260b62 comply with the new GAPDoc testing methods
+
+Versions:
+2011.11.16 which is Max' version
+2012.09.21 which is Mohamed's version
