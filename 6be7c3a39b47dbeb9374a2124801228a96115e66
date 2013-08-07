@@ -183,3 +183,10 @@ SCSCP_ForHomalg/: a41318f comply with the new GAPDoc testing methods
 
 Versions:
  2011.12.17
+
+Sheaves/: 657e1ac simplified code for Complement
+
+Versions:
+2011.08.21 which is Markus' version
+2013.08.05 which is Mohamed's version
+2013.08.06 which is Thomas' version
