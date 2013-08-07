@@ -146,3 +146,13 @@ Versions:
 2013.07.23 which is Mohamed's version
 2012.10.17 which is Sebas' version
 2013.07.20 which is Vinay's version
+
+Modules/: cc4967f fixed AMaximalIdealContaining: n = 1 -> IsOne( n )
+
+Versions:
+2013.07.05 which is Mohamed's version
+2012.10.22 which is Markus' version
+2011.07.20 which is Florian's version
+2013.04.12 which is Sebas' version
+2013.05.05 which is Sepp's version
+2013.07.01 which is Vinay's version
