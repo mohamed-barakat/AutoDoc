@@ -55,3 +55,8 @@ D-Modules/: fb87df6 removed the yet obsolete examples.xml file
 
 Versions:
  2013.04.16
+
+ExamplesForHomalg/: 81371c7 W  PackageDoc.Archive is withdrawn, use PackageDoc.ArchiveURLSubset instead
+
+Versions:
+ 2012.10.23
