@@ -18,3 +18,10 @@ AlgebraicThomas/: 782cad9 Merge pull request #3 from brain0/working
 Versions:
 2013.07.06 which is Mohamed's version
 2013.08.06 which is Thomas' version
+
+AutoDoc/: ca42137 fixed AutoDoc_CreateCompleteEntry
+
+Versions:
+2013.08.08.15:45 which is Sebas' version
+2013.07.30 which is Max' version
+2013.08.08.20:20 which is Mohamed's version
