@@ -114,3 +114,9 @@ k-Points/: 22cd36c standard header
 Versions:
 2012.10.22 which is Mohamed's version
 2011.06.01 which is Alban's version
+
+LessGenerators/: 4c56dca coding style: replace tabs by spaces
+
+Versions:
+2013.08.07 which is Mohamed's version
+2013.07.20 which is Vinay's version
