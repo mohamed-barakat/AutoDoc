@@ -18,3 +18,10 @@ AlgebraicThomas/: 782cad9 Merge pull request #3 from brain0/working
 Versions:
 2013.07.06 which is Mohamed's version
 2013.08.06 which is Thomas' version
+
+AutoDoc/: c89fda6 Removed ListOfDocFiles.gd from makefile.
+
+Versions:
+2013.08.09:12:41 which is Sebas' version
+2013.08.09:14:09 which is Max' version
+2013.08.08.23:06 which is Mohamed's version
