@@ -169,3 +169,13 @@ PolymakeInterface/: 249285a Added function for f vector.
 
 Versions:
 2013.07.29 which is Sebas' version
+
+RingsForHomalg/: c5cf7f9 deactive CopyElement in CommonHomalgTableForMAGMATools
+
+Versions:
+2011.09.12 which is Markus L-H's version
+2011.06.16 which is Markus K's version
+2013.07.17 which is Mohamed's version
+2011.12.13 which is Andreas's version
+2012.12.11 which is Sebas' version
+2013.07.16 which is Vinay's version
