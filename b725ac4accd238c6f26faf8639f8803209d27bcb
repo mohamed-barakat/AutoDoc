@@ -30,3 +30,8 @@ AutomaticDocumentation/: 98f72ff Merge pull request #1 from sebasguts/master
 
 Versions:
 2012.08.06 which is Sebas' version
+
+Blocks/: eeaf977 CentralCharactersOfBlocks now stores the entries of its output list in corr. block record
+
+Versions:
+2013.07.06 which is Mohamed's version
