@@ -32,7 +32,7 @@ end );
 InstallGlobalFunction( AutoDoc_Scan_for_command,
                        
   function( string )
-    local command_pos, rest_of_string, i , command_list;
+    local command_pos, rest_of_string, i , command_list, space_pos;
     
     command_pos := PositionSublist( string, "@" );
     
@@ -44,39 +44,19 @@ InstallGlobalFunction( AutoDoc_Scan_for_command,
     
     string := string{ [ command_pos .. Length( string ) ] };
     
-    command_list := [ "@ChapterInfo",
-                      "@AutoDoc",
-                      "@EndAutoDoc",
-                      "@Chapter",
-                      "@Section",
-                      "@EndSection",
-                      "@BeginGroup",
-                      "@EndGroup",
-                      "@Description",
-                      "@Returns",
-                      "@Arguments",
-                      "@Group",
-                      "@Label",
-                      "@Level",
-                      "@ResetLevel",
-                      "@BREAK"
-                    ];
-                      
-    for i in command_list do
-        
-        command_pos := PositionSublist( string, i );
-        
-        if command_pos <> fail then
-            
-            return [ i, AutoDoc_RemoveSpacesAndComments( string{[ command_pos + Length( i ) .. Length( string ) ] } ) ];
-            
-        fi;
-        
-    od;
+    NormalizeWhitespace( string );
     
-    Error( "Unrecognized command" );
+    space_pos := PositionSublist( string, " " );
     
-    return fail;
+    if space_pos <> fail then
+        
+        return [ string{[ 1 .. space_pos - 1 ]}, AutoDoc_RemoveSpacesAndComments( string{[ space_pos + 1 .. Length( string ) ] } ) ];
+        
+    else
+        
+        return [ string, "" ];
+        
+    fi;
     
 end );
 
@@ -84,17 +64,19 @@ end );
 InstallGlobalFunction( AutoDoc_Flush,
                        
   function( current_item )
-    local type, length_arg_list;
+    local type, length_arg_list, system, node;
+    
+    system := ValueOption( "system_name" );
     
     type := current_item[ 1 ];
     
     if type = "Chapter" then
         
-        Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationText( current_item[ 3 ], [ current_item[ 2 ] ] ) );
+        node := DocumentationText( current_item[ 3 ], [ current_item[ 2 ] ] );
         
     elif type = "Section" then
         
-        Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationText( current_item[ 4 ], [ current_item[ 2 ], current_item[ 3 ] ] ) );
+        node := DocumentationText( current_item[ 4 ], [ current_item[ 2 ], current_item[ 3 ] ] );
         
     elif type = "Item" then
         
@@ -124,7 +106,21 @@ InstallGlobalFunction( AutoDoc_Flush,
             
         fi;
         
-        Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationItem( current_item[ 2 ] ) );
+        node := DocumentationItem( current_item[ 2 ] );
+        
+    fi;
+    
+    if IsBound( node ) then
+        
+        if system <> fail then
+            
+            SetDummyName( node, system );
+            
+            PushOptions( rec( system_name := fail ) );
+            
+        fi;
+        
+        Add( AUTOMATIC_DOCUMENTATION.tree, node );
         
     fi;
     
@@ -276,7 +272,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
           has_filters, filter_string, current_command, current_string_list,
           scope_chapter, scope_section, scope_group, current_type, autodoc_counter,
           position_parentesis, is_autodoc_scope, command_function_record, recover_item,
-          level_value;
+          level_value, read_example;
     
     recover_item := function( )
       
@@ -300,6 +296,55 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
           
       fi;
       
+    end;
+    
+    #Needs to be done seperately, since now every line is parsed.
+    read_example := function()
+        local temp_string_list, temp_curr_line, temp_pos_comment;
+        
+        temp_string_list := [ ];
+        
+        while true do
+            
+            temp_curr_line := ReadLine( filestream );
+            
+            if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail then
+                
+                break;
+                
+            fi;
+            
+            NormalizeWhitespace( temp_curr_line );
+            
+            ##if is comment, simply remove comments.
+            temp_pos_comment := PositionSublist( temp_curr_line, "#!" );
+            
+            if temp_pos_comment <> fail then
+                
+                temp_curr_line := temp_curr_line{[ temp_pos_comment + 2 .. Length( temp_curr_line ) ]};
+                
+                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                
+                Add( temp_string_list, temp_curr_line );
+                
+                continue;
+                
+            else
+                
+                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                
+                temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                
+                Add( temp_string_list, temp_curr_line );
+                
+                continue;
+                
+            fi;
+            
+        od;
+        
+        return temp_string_list;
+        
     end;
     
     #### Initialize the command_function_record
@@ -484,8 +529,50 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
             
             PushOptions( rec( level_value := 0 ) );
             
+        end,
+        
+        @InsertSystem := function()
+            
+            AutoDoc_Flush( current_item );
+            
+            Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationDummy( current_command[ 2 ], chapter_info ) );
+            
+            recover_item();
+            
+        end,
+        
+        @System := function()
+            
+            PushOptions( rec( system_name := current_command[ 2 ] ) );
+            
+        end,
+        
+        @Example := function()
+            local content_string_list;
+            
+            AutoDoc_Flush( current_item );
+            
+            content_string_list := read_example();
+            
+            Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationExample( content_string_list, chapter_info ) );
+            
+            recover_item();
+            
+        end,
+        
+        ##FIXME: This is hacky! You can do this better.
+        @Author := function()
+            
+            PushOptions( rec( AutoDoc_Author := current_command[ 2 ] ) );
+            
+        end,
+        
+        @Title := function()
+            
+            PushOptions( rec( AutoDoc_Title := current_command[ 2 ] ) );
+            
         end
-    
+        
     );
     
     filestream := InputTextFile( filename );

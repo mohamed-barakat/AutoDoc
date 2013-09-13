@@ -74,6 +74,23 @@ BindGlobal( "TheTypeOfDocumentationTreeNodesForGroup",
         NewType( TheFamilyOfDocumentationTreeNodes,
                 IsTreeForDocumentationNodeForGroupRep ) );
 
+## DeclareRepresentation
+DeclareRepresentation( "IsTreeForDocumentationDummyNodeRep",
+                       IsTreeForDocumentationNodeRep,
+                       [ ] );
+
+BindGlobal( "TheTypeOfDocumentationTreeDummyNodes", 
+        NewType( TheFamilyOfDocumentationTreeNodes,
+                IsTreeForDocumentationDummyNodeRep ) );
+
+## DeclareRepresentation
+DeclareRepresentation( "IsTreeForDocumentationExampleNodeRep",
+                       IsTreeForDocumentationNodeRep,
+                       [ ] );
+
+BindGlobal( "TheTypeOfDocumentationTreeExampleNodes", 
+        NewType( TheFamilyOfDocumentationTreeNodes,
+                IsTreeForDocumentationExampleNodeRep ) );
 
 
 ###################################
@@ -92,7 +109,9 @@ InstallMethod( DocumentationTree,
     tree := rec(
                   nodes := [ ],
                   nodes_by_name := rec( ),
-                  groups := rec( )
+                  groups := rec( ),
+                  dummies := rec( ),
+                  contents_for_dummies := rec( )
             );
     
     ObjectifyWithAttributes( tree,
@@ -230,6 +249,31 @@ InstallMethod( DocumentationItem,
     
 end );
 
+##
+InstallMethod( DocumentationExample,
+               [ IsList, IsList ],
+               
+  function( string_list, chapter_info )
+    local level, node;
+    
+    level := ValueOption( "level_value" );
+    
+    if level = fail then
+        
+        level := 0;
+        
+    fi;
+    
+    node := rec( content := string_list,
+                 level := level );
+    
+    ObjectifyWithAttributes( node, TheTypeOfDocumentationTreeExampleNodes,
+                             ChapterInfo, chapter_info );
+    
+    return node;
+    
+end );
+
 ## This method is going to have side effects on its first argument.
 ## So no readding would be necessary. This should only be used internally.
 ## The side effects are also the reason why this is not called Concatenation.
@@ -247,6 +291,21 @@ InstallMethod( MergeGroupEntries,
     fi;
     
     group1!.content_list := Concatenation( group1!.content_list, group2!.content_list );
+    
+end );
+
+InstallMethod( DocumentationDummy,
+               [ IsString, IsList ],
+               
+  function( name, chapter_info )
+    local node;
+    
+    node := rec( chapter_info := chapter_info );
+    
+    ObjectifyWithAttributes( node, TheTypeOfDocumentationTreeDummyNodes,
+                             Name, name );
+    
+    return node;
     
 end );
 
@@ -305,6 +364,28 @@ end );
 
 ##
 InstallMethod( Add,
+               "for dummy fillers",
+               [ IsTreeForDocumentation, IsTreeForDocumentationNodeRep and HasDummyName ],
+               
+  function( tree, node )
+    local name;
+    
+    name := Name( node );
+    
+    if IsBound( tree!.dummies.(name) ) then
+        
+        tree!.dummies!.(name).content := node;
+        
+    else
+        
+        tree!.contents_for_dummies.(name) := node;
+        
+    fi;
+    
+end );
+
+##
+InstallMethod( Add,
                "for text nodes",
                [ IsTreeForDocumentation, IsTreeForDocumentationNodeForTextRep ],
                
@@ -316,6 +397,32 @@ InstallMethod( Add,
         return;
         
     fi;
+    
+    chapter_info := ChapterInfo( node );
+    
+    if Length( chapter_info ) = 1 then
+        
+        entry_node := ChapterInTree( tree, chapter_info[ 1 ] );
+        
+    else
+        
+        entry_node := SectionInTree( tree, chapter_info[ 1 ], chapter_info[ 2 ] );
+        
+    fi;
+    
+    ResetFilterObj( entry_node, IsEmptyNode );
+    
+    Add( entry_node!.nodes, node );
+    
+end );
+
+##
+InstallMethod( Add,
+               "for example nodes",
+               [ IsTreeForDocumentation, IsTreeForDocumentationExampleNodeRep ],
+               
+  function( tree, node )
+    local chapter_info, entry_node;
     
     chapter_info := ChapterInfo( node );
     
@@ -389,6 +496,42 @@ InstallMethod( Add,
     
     ## FIXME: This might be irrelevant.
     entry_node!.nodes_by_name.( name ) := node;
+    
+end );
+
+##
+InstallMethod( Add,
+               "for dummy nodes",
+               [ IsTreeForDocumentation, IsTreeForDocumentationDummyNodeRep ],
+               
+  function( tree, node )
+    local name, entry_node, chapter_info;
+    
+    chapter_info := node!.chapter_info;
+    
+    name := Name( node );
+    
+    if IsBound( tree!.contents_for_dummies.(name) ) then
+        
+        node!.content := tree!.contents_for_dummies.(name);
+        
+    fi;
+    
+    if Length( chapter_info ) > 1 then
+        
+        entry_node := SectionInTree( tree, chapter_info[ 1 ], chapter_info[ 2 ] );
+        
+    else
+        
+        entry_node := ChapterInTree( tree, chapter_info[ 1 ] );
+        
+    fi;
+    
+    Add( entry_node!.nodes, node );
+    
+    entry_node!.nodes_by_name.(name) := node;
+    
+    tree!.dummies.(name) := node;
     
 end );
 
@@ -596,5 +739,46 @@ InstallMethod( WriteDocumentation,
     entry_list := node!.content_list;
     
     AutoDoc_WriteDocEntry( filestream, entry_list );
+    
+end );
+
+##
+InstallMethod( WriteDocumentation,
+               [ IsTreeForDocumentationDummyNodeRep, IsStream ],
+               
+  function( node, filestream )
+    
+    if IsBound( node!.content ) then
+        
+        WriteDocumentation( node!.content, filestream );
+        
+    fi;
+    
+end );
+
+##
+InstallMethod( WriteDocumentation,
+               [ IsTreeForDocumentationExampleNodeRep, IsStream ],
+               
+  function( node, filestream )
+    local contents, i;
+    
+    if node!.level > ValueOption( "level_value" ) then
+        
+        return;
+        
+    fi;
+    
+    contents := node!.content;
+    
+    AppendTo( filestream, "<Example><![CDATA[\n" );
+    
+    for i in contents do
+        
+        AppendTo( filestream, i, "\n" );
+        
+    od;
+    
+    AppendTo( filestream, "]]></Example>\n\n" );
     
 end );

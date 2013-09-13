@@ -26,6 +26,9 @@ DeclareAttribute( "Name",
 DeclareAttribute( "ChapterInfo",
                   IsTreeForDocumentationNode );
 
+DeclareAttribute( "DummyName",
+                  IsTreeForDocumentationNode );
+
 ######################################
 ##
 ## Constructors
@@ -46,6 +49,12 @@ DeclareOperation( "DocumentationText",
 
 DeclareOperation( "DocumentationItem",
                   [ IsRecord ] );
+
+DeclareOperation( "DocumentationDummy",
+                  [ IsString, IsList ] );
+
+DeclareOperation( "DocumentationExample",
+                  [ IsList, IsList ] );
 
 ######################################
 ##
