@@ -67,4 +67,24 @@ DeclareGlobalFunction( "WriteStringIntoDoc" );
 #!  </Item>
 #!  </List>
 #!  Note that some commands have no effect, i.e. the level command.
+#! The options are as follows.
+#! <List>
+#! <Mark>BookName</Mark>
+#! <Item>
+#! The option BookName is an optional string, specifying the name of the manual book.
+#! If there is no BookName, the title is used. If there is no title, the filename of
+#! the first file is used.
+#! </Item>
+#! <Mark>TestFile</Mark>
+#! <Item>
+#! If TestFile is set to false, no testfile is produced. If TestFile is a string,
+#! then it is used as name of the testfile. If nothing is given, the testfile will be
+#! maketest.g
+#! </Item>
+#! <Mark>OutputFolder</Mark>
+#! <Item>
+#! All files will be stored in OutputFolder. If OutputFolder is not given, the folder of the first file will be used.
+#! </Item>
+#! </List>
+#! @Arguments list_of_filenames : BookName, TestFile
 DeclareGlobalFunction( "AutoDocWorksheet" );
