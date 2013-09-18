@@ -609,7 +609,7 @@ InstallGlobalFunction( AutoDocWorksheet,
                        
   function( filelist )
     local folder, filename, folder_length, filestream, plain_filename, title, author, output_folder, testfile,
-          book_name;
+          book_name, maketest_commands, commands;
     
     if IsString( filelist ) then
         
@@ -711,6 +711,14 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     testfile := ValueOption( "TestFile" );
     
+    maketest_commands := ValueOption( "TestFileCommands" );
+    
+    if IsString( maketest_commands ) then
+        
+        maketest_commands := [ maketest_commands ];
+        
+    fi;
+    
     if testfile <> false then
         
         if testfile = fail then
@@ -721,13 +729,25 @@ InstallGlobalFunction( AutoDocWorksheet,
         
         filestream := AUTODOC_OutputTextFile( output_folder, testfile );
         
+        if maketest_commands <> fail then
+            
+            for commands in maketest_commands do
+                
+                AppendTo( filestream, commands );
+                
+                AppendTo( filestream, "\n\n" );
+                
+            od;
+            
+        fi;
+        
         AppendTo( filestream, "LoadPackage( \" GAPDoc \" );\n\n" );
         
         AppendTo( filestream, "example_tree := ExtractExamples( Directory(\".\"), \"", Concatenation( book_name, ".xml" ),"\", [ ], 500 );\n\n" );
         
         AppendTo( filestream, "RunExamples( example_tree, rec( compareFunction := \"uptowhitespace\" ) );\n\n" );
         
-        AppendTo( filestream, "QUIT;\n\n" );
+        AppendTo( filestream, "QUIT;\n" );
         
     fi;
     

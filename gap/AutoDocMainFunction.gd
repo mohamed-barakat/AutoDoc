@@ -85,6 +85,10 @@ DeclareGlobalFunction( "WriteStringIntoDoc" );
 #! <Item>
 #! All files will be stored in OutputFolder. If OutputFolder is not given, the folder of the first file will be used.
 #! </Item>
+#! <Mark>TestFileCommands</Mark>
+#! <Item>
+#! String or list of strings to be added at beginning of testfile.
+#! </Item>
 #! </List>
-#! @Arguments list_of_filenames : BookName, TestFile
+#! @Arguments list_of_filenames : BookName, TestFile, OutputFolder, TestFileCommands
 DeclareGlobalFunction( "AutoDocWorksheet" );
