@@ -609,7 +609,7 @@ InstallGlobalFunction( AutoDocWorksheet,
                        
   function( filelist )
     local folder, filename, folder_length, filestream, plain_filename, title, author, output_folder, testfile,
-          book_name, maketest_commands, commands;
+          book_name, maketest_commands, commands, bibfile;
     
     if IsString( filelist ) then
         
@@ -698,6 +698,16 @@ InstallGlobalFunction( AutoDocWorksheet,
     AppendTo( filestream, "<#Include SYSTEM \"AutoDocMainFile.xml\">\n" );
     
     AppendTo( filestream, "</Body>\n" );
+    
+    bibfile := ValueOption( "Bibliography" );
+    
+    if bibfile <> fail then
+        
+        AppendTo( filestream, "<Bibliography Databases=\"", opt.bib, "\"/>\n" );
+        
+    fi;
+    
+    AppendTo( filestream, "<TheIndex/>\n" );
     
     AppendTo( filestream, "</Book>\n" );
     

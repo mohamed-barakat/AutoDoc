@@ -89,6 +89,10 @@ DeclareGlobalFunction( "WriteStringIntoDoc" );
 #! <Item>
 #! String or list of strings to be added at beginning of testfile.
 #! </Item>
+#! <Mark>Bibliography</Mark>
+#! <Item>
+#! Path to a bibliography file.
+#! </Item>
 #! </List>
-#! @Arguments list_of_filenames : BookName, TestFile, OutputFolder, TestFileCommands
+#! @Arguments list_of_filenames : BookName, TestFile, OutputFolder, TestFileCommands, Bibliography
 DeclareGlobalFunction( "AutoDocWorksheet" );
