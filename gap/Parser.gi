@@ -341,6 +341,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
                     
                     temp_curr_line := Concatenation( "> ", temp_curr_line );
                     
+                    if PositionSublist( temp_curr_line, ";" ) <> fail then
+                        
+                        is_following_line := false;
+                        
+                    fi;
+                    
                 else
                     
                     temp_curr_line := Concatenation( "gap> ", temp_curr_line );
