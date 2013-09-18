@@ -609,7 +609,7 @@ InstallGlobalFunction( AutoDocWorksheet,
                        
   function( filelist )
     local folder, filename, folder_length, filestream, plain_filename, title, author, output_folder, testfile,
-          book_name, maketest_commands, commands, bibfile;
+          book_name, maketest_commands, commands, bibfile, bib_tmp;
     
     if IsString( filelist ) then
         
@@ -694,6 +694,8 @@ InstallGlobalFunction( AutoDocWorksheet,
     AppendTo( filestream, "</TitlePage>" );
     
     AppendTo( filestream, "<Body>\n" );
+    
+    AppendTo( filestream, "<Index>&", book_name, ";</Index>\n" );
     
     AppendTo( filestream, "<#Include SYSTEM \"AutoDocMainFile.xml\">\n" );
     
