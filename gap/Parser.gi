@@ -323,9 +323,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
             
             if temp_pos_comment <> fail then
                 
-                temp_curr_line := temp_curr_line{[ temp_pos_comment + 2 .. Length( temp_curr_line ) ]};
-                
-                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                temp_curr_line := temp_curr_line{[ temp_pos_comment + 3 .. Length( temp_curr_line ) ]};
                 
                 Add( temp_string_list, temp_curr_line );
                 
@@ -334,8 +332,6 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
                 continue;
                 
             else
-                
-                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
                 
                 if is_following_line then
                     
