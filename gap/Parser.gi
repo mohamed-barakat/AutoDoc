@@ -310,13 +310,17 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
             
             temp_curr_line := ReadLine( filestream );
             
+            if temp_curr_line[ Length( temp_curr_line )] = '\n' then
+                
+                temp_curr_line := temp_curr_line{[ 1 .. Length( temp_curr_line ) - 1 ]};
+                
+            fi;
+            
             if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail then
                 
                 break;
                 
             fi;
-            
-            NormalizeWhitespace( temp_curr_line );
             
             ##if is comment, simply remove comments.
             temp_pos_comment := PositionSublist( temp_curr_line, "#!" );
@@ -347,7 +351,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
                     
                     temp_curr_line := Concatenation( "gap> ", temp_curr_line );
                     
-                    is_following_line := true;
+                    is_following_line := PositionSublist( temp_curr_line, ";" ) = fail;
                     
                 fi;
                 
