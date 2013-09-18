@@ -703,10 +703,10 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     if bibfile <> fail then
         
-        AppendTo( filestream, "<Bibliography Databases=\"", opt.bib, "\"/>\n" );
+        AppendTo( filestream, "<Bibliography Databases=\"", bibfile, "\"/>\n" );
         
     fi;
-    
+      
     AppendTo( filestream, "<TheIndex/>\n" );
     
     AppendTo( filestream, "</Book>\n" );
