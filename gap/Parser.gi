@@ -300,13 +300,21 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
     
     #Needs to be done seperately, since now every line is parsed.
     read_example := function()
-        local temp_string_list, temp_curr_line, temp_pos_comment;
+        local temp_string_list, temp_curr_line, temp_pos_comment, is_following_line;
         
         temp_string_list := [ ];
+        
+        is_following_line := false;
         
         while true do
             
             temp_curr_line := ReadLine( filestream );
+            
+            if temp_curr_line[ Length( temp_curr_line )] = '\n' then
+                
+                temp_curr_line := temp_curr_line{[ 1 .. Length( temp_curr_line ) - 1 ]};
+                
+            fi;
             
             if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail then
                 
@@ -314,26 +322,38 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
                 
             fi;
             
-            NormalizeWhitespace( temp_curr_line );
-            
             ##if is comment, simply remove comments.
             temp_pos_comment := PositionSublist( temp_curr_line, "#!" );
             
             if temp_pos_comment <> fail then
                 
-                temp_curr_line := temp_curr_line{[ temp_pos_comment + 2 .. Length( temp_curr_line ) ]};
-                
-                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                temp_curr_line := temp_curr_line{[ temp_pos_comment + 3 .. Length( temp_curr_line ) ]};
                 
                 Add( temp_string_list, temp_curr_line );
+                
+                is_following_line := false;
                 
                 continue;
                 
             else
                 
-                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
-                
-                temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                if is_following_line then
+                    
+                    temp_curr_line := Concatenation( "> ", temp_curr_line );
+                    
+                    if PositionSublist( temp_curr_line, ";" ) <> fail then
+                        
+                        is_following_line := false;
+                        
+                    fi;
+                    
+                else
+                    
+                    temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                    
+                    is_following_line := PositionSublist( temp_curr_line, ";" ) = fail;
+                    
+                fi;
                 
                 Add( temp_string_list, temp_curr_line );
                 
@@ -551,6 +571,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
             local content_string_list;
             
             AutoDoc_Flush( current_item );
+            
+            if current_command[ 2 ] <> "" then
+                
+                ~.@System( );
+                
+            fi;
             
             content_string_list := read_example();
             
