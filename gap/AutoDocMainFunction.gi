@@ -727,7 +727,7 @@ InstallGlobalFunction( AutoDocWorksheet,
         
         AppendTo( filestream, "RunExamples( example_tree, rec( compareFunction := \"uptowhitespace\" ) );\n\n" );
         
-        AppendTo( filestream, "QUIT\n\n" );
+        AppendTo( filestream, "QUIT;\n\n" );
         
     fi;
     

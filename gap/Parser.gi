@@ -300,9 +300,11 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
     
     #Needs to be done seperately, since now every line is parsed.
     read_example := function()
-        local temp_string_list, temp_curr_line, temp_pos_comment;
+        local temp_string_list, temp_curr_line, temp_pos_comment, is_following_line;
         
         temp_string_list := [ ];
+        
+        is_following_line := false;
         
         while true do
             
@@ -327,13 +329,25 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
                 
                 Add( temp_string_list, temp_curr_line );
                 
+                is_following_line := false;
+                
                 continue;
                 
             else
                 
                 temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
                 
-                temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                if is_following_line then
+                    
+                    temp_curr_line := Concatenation( "> ", temp_curr_line );
+                    
+                else
+                    
+                    temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                    
+                    is_following_line := true;
+                    
+                fi;
                 
                 Add( temp_string_list, temp_curr_line );
                 
