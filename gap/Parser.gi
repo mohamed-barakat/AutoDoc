@@ -572,6 +572,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFile,
             
             AutoDoc_Flush( current_item );
             
+            if current_command[ 2 ] <> "" then
+                
+                ~.@System( );
+                
+            fi;
+            
             content_string_list := read_example();
             
             Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationExample( content_string_list, chapter_info ) );
