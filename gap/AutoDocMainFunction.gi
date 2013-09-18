@@ -671,7 +671,11 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     AppendTo( filestream, AUTODOC_XML_HEADER );
     
-    AppendTo( filestream, "<!DOCTYPE Book SYSTEM \"gapdoc.dtd\"\n[\n", "]\n>\n" );
+    AppendTo( filestream, "<!DOCTYPE Book SYSTEM \"gapdoc.dtd\"\n[\n" );
+    
+    AppendTo( filestream, "<!ENTITY ", book_name, " '<Package>", book_name, "</Package>'>\n" );
+    
+    AppendTo( filestream, "]\n>\n" );
     
     AppendTo( filestream, "<Book Name=\"", book_name, "\">\n" );
     
