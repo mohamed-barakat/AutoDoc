@@ -99,9 +99,7 @@ InstallGlobalFunction( AutoDoc_Type_Of_Item,
   function( current_item, type )
     local item_rec, entries, has_filters, ret_val;
     
-    item_rec := current_item[ 2 ];
-    
-    
+    item_rec := current_item;
     
     if type = "Category" then
         
@@ -193,6 +191,228 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     
     level_scope := 0;
     
+    Scan_for_Declaration_part := function()
+        local declare_position, current_type, filter_string, has_filters,
+              position_parentesis, filter_string;
+        
+        declare_position := PositionSublist( current_line, "Declare" );
+        
+        if declare_position <> fail then
+            
+            flush_and_prepare_for_item();
+            
+            current_line := current_line{[ declare_position + 7 .. Length( current_line ) ]};
+            
+            position_parentesis := PositionSublist( current_line, "(" );
+            
+            if position_parentesis = fail then
+                
+                Error( "Something went wrong" );
+                
+            fi;
+            
+            current_type := current_line{ [ 1 .. position_parentesis - 1 ] };
+            
+            has_filters := AutoDoc_Type_Of_Item( current_item, current_type );
+            
+            if has_filters = fail then
+                
+                Error( "Unrecognized scan type" );
+                
+                return fail;
+                
+            fi;
+            
+            current_line := current_line{ [ position_parentesis + 1 .. Length( current_line ) ] };
+            
+            ## Not the funny part begins:
+            ## try fetching the name:
+            
+            ## Assuming the name is in the same line as its 
+            while PositionSublist( current_line, "," ) = fail and PositionSublist( current_line, ");" ) = fail do
+                
+                current_line := Normalized_ReadLine( filestream );
+                
+            od;
+            
+            current_line := AutoDoc_remove_trailing_and_beginning_whitespaces( current_line );
+            
+            current_item.name := current_line{ [ 1 .. Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) - 1 ] };
+            
+            current_item.name := AutoDoc_RemoveSpacesAndComments( ReplacedString( current_item[ 2 ].name, "\"", "" ) );
+            
+            current_line := current_line{ [ Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) + 1 .. Length( current_line ) ] };
+            
+            if has_filters = "One" then
+                
+                filter_string := "for ";
+                
+                while PositionSublist( current_line, "," ) = fail and PositionSublist( current_line, ");" ) = fail do
+                    
+                    Append( filter_string, AutoDoc_RemoveSpacesAndComments( current_line ) );
+                    
+                    current_line := ReadLine( filestream );
+                    
+                    NormalizeWhitespace( current_line );
+                    
+                od;
+                
+                Append( filter_string, AutoDoc_RemoveSpacesAndComments( current_line{ [ 1 .. Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) - 1 ] } ) );
+                
+            elif has_filters = "List" then
+                
+                filter_string := "for ";
+                
+                while PositionSublist( current_line, "[" ) = fail do
+                    
+                    current_line := ReadLine( filestream );
+                    
+                    NormalizeWhitespace( current_line );
+                    
+                od;
+                
+                current_line := current_line{ [ PositionSublist( current_line, "[" ) + 1 .. Length( current_line ) ] };
+                
+                while PositionSublist( current_line, "]" ) = fail do
+                    
+                    Append( filter_string, AutoDoc_RemoveSpacesAndComments( current_line ) );
+                    
+                    current_line := ReadLine( filestream );
+                    
+                    NormalizeWhitespace( current_line );
+                    
+                od;
+                
+                Append( filter_string, AutoDoc_RemoveSpacesAndComments( current_line{[ 1 .. PositionSublist( current_line, "]" ) - 1 ]} ) );
+                
+            else
+                
+                filter_string := false;
+                
+            fi;
+            
+            if filter_string <> false then
+                
+                current_item.tester_names := filter_string;
+                
+            fi;
+            
+            return true;
+            
+        fi;
+        
+        declare_position := PositionSublist( current_line, "InstallMethod" );
+        
+        if declare_position <> fail then
+            
+            flush_and_prepare_for_item();
+            
+            current_item.type := "Func";
+            
+            current_item.doc_stream_type := "operations";
+            
+            ##Find name
+            
+            position_parentesis := PositionSublist( current_line, "(" );
+            
+            current_line := current_line{ [ position_parentesis + 1 .. Length( current_line ) ] };
+            
+            ## find next colon
+            current_item.name := "";
+            
+            while PositionSublist( current_line, "," ) = fail do
+                
+                Append( current_item.name, current_line );
+                
+                current_line := Normalized_ReadLine( filestream );
+                
+            od;
+            
+            position_parentesis := PositionSublist( current_line, "," );
+            
+            Append( current_item.name, current_line{[ 1 .. position_parentesis - 1 ]} );
+            
+            NormalizeWhitespace( current_item.name );
+            
+            current_item.name := AutoDoc_remove_trailing_and_beginning_whitespaces( current_item.name );
+            
+            while PositionSublist( current_line, "[" ) = fail do
+                
+                current_line := Normalized_ReadLine( filestream );
+                
+            od;
+            
+            position_parentesis := PositionSublist( current_line, "[" );
+            
+            current_line := current_line{[ position_parentesis + 1 .. Length( current_line ) ]};
+            
+            filter_string := "for ";
+            
+            while PositionSublist( current_line, "]" ) = fail do
+                
+                Append( filter_string, current_line );
+                
+            od;
+            
+            position_parentesis := PositionSublist( current_line, "]" );
+            
+            Append( filter_string, current_line{[ 1 .. position_parentesis - 1 ]} );
+            
+            current_line := current_line{[ position_parentesis + 1 .. Length( current_line )]};
+            
+            NormalizeWhitespace( filter_string );
+            
+            current_item[ 2 ].tester_names := filter_string;
+            
+            ##Maybe find some argument names
+            if not IsBound( current_item[ 2 ].arguments ) then
+            
+                while PositionSublist( current_line, "function(" ) = fail and PositionSublist( current_line, ");" ) = fail do
+                    
+                    current_line := Normalized_ReadLine( filestream );
+                    
+                od;
+                
+                position_parentesis := PositionSublist( current_line, "function(" );
+                
+                if position_parentesis <> fail then
+                    
+                    current_line := current_line{[ position_parentesis + 9 .. Length( current_line ) ]};
+                    
+                    filter_string := "";
+                    
+                    while PositionSublist( current_line, ")" ) = fail do;
+                        
+                        current_line := AutoDoc_remove_trailing_and_beginning_whitespaces( current_line );
+                        
+                        Append( filter_string, current_line );
+                        
+                        current_line := Normalized_ReadLine( current_line );
+                        
+                    od;
+                    
+                    position_parentesis := PositionSublist( current_line, ")" );
+                    
+                    Append( filter_string, current_line{[ 1 .. position_parentesis - 1 ]} );
+                    
+                    NormalizeWhitespace( filter_string );
+                    
+                    filter_string := AutoDoc_RemoveSpacesAndComments( filter_string );
+                    
+                    current_item.arguments := filter_string;
+                    
+                fi;
+                
+            fi;
+            
+            return true;
+            
+        fi;
+        
+        return false;
+        
+    end;
+    
     flush_text_and_prepare_for_item := function()
         local node;
         
@@ -223,14 +443,6 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     flush_and_recover := function()
         local node;
         
-        if IsBound( system_scope ) then
-            
-            current_item!.system := system_scope;
-            
-            Unbind( system_scope );
-            
-        fi;
-        
         if IsBound( current_item ) then
             
             node := DocumentationNode( current_item );
@@ -260,13 +472,23 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     end;
     
     read_example := function()
-        local temp_string_list, temp_curr_line, temp_pos_comment;
+        local temp_string_list, temp_curr_line, temp_pos_comment, is_following_line;
         
-        temp_string_list := [ ];
+        current_item.node_type := "EXAMPLE";
+        
+        temp_string_list := current_item.text;
+        
+        is_following_line := false;
         
         while true do
             
             temp_curr_line := ReadLine( filestream );
+            
+            if temp_curr_line[ Length( temp_curr_line )] = '\n' then
+                
+                temp_curr_line := temp_curr_line{[ 1 .. Length( temp_curr_line ) - 1 ]};
+                
+            fi;
             
             if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail then
                 
@@ -274,26 +496,38 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
             fi;
             
-            NormalizeWhitespace( temp_curr_line );
-            
             ##if is comment, simply remove comments.
             temp_pos_comment := PositionSublist( temp_curr_line, "#!" );
             
             if temp_pos_comment <> fail then
                 
-                temp_curr_line := temp_curr_line{[ temp_pos_comment + 2 .. Length( temp_curr_line ) ]};
-                
-                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                temp_curr_line := temp_curr_line{[ temp_pos_comment + 3 .. Length( temp_curr_line ) ]};
                 
                 Add( temp_string_list, temp_curr_line );
+                
+                is_following_line := false;
                 
                 continue;
                 
             else
                 
-                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
-                
-                temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                if is_following_line then
+                    
+                    temp_curr_line := Concatenation( "> ", temp_curr_line );
+                    
+                    if PositionSublist( temp_curr_line, ";" ) <> fail then
+                        
+                        is_following_line := false;
+                        
+                    fi;
+                    
+                else
+                    
+                    temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                    
+                    is_following_line := PositionSublist( temp_curr_line, ";" ) = fail;
+                    
+                fi;
                 
                 Add( temp_string_list, temp_curr_line );
                 
@@ -311,13 +545,13 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         
         @AutoDoc := function()
             
-            ##FIXME
+            autodoc_read_line := fail;
             
         end,
         
         @EndAutoDoc := function()
             
-            ##FIXME
+            autodoc_read_line := false;
             
         end,
         
@@ -479,6 +713,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
         end,
         
+        ## FIXME
         @System := function()
             
             flush_and_recover();
@@ -489,14 +724,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         
         ## FIXME
         @Example := function()
-            local content_string_list;
             
             flush_and_recover();
             
-            content_string_list := read_example();
+            read_example();
             
-            ## FIXME: Does this really need different treatment?
-            Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationExample( content_string_list, chapter_info ) );
+            flush_and_recover();
             
         end,
         
@@ -516,6 +749,67 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             tree!.worksheet_title := current_command[ 2 ];
             
+        end,
+        
+        TEXT := function()
+            
+            Add( current_string_list, current_command[ 2 ] );
+            
         end
         
     );
+    
+    ##Now read the files.
+    for filename in filename_list do
+        
+        filestream := InputTextFile( filename );
+        
+        while true do
+            
+            current_line := ReadLine( filestream );
+            
+            if current_line = fail then
+                
+                flush_and_recover();
+                
+                break;
+                
+            fi;
+            
+            current_command := Scan_for_AutoDoc_Part( current_line );
+            
+            if current_command[ 1 ] <> false then
+                
+                command_function_record.(current_command[ 1 ])();
+                
+                if autodoc_read_line <> fail then
+                    
+                    autodoc_read_line := true;
+                    
+                fi;
+                
+            fi;
+            
+            current_line := current_command[ 2 ];
+            
+            if autodoc_read_line or autodoc_read_line = fail then
+                
+                was_declaration := Scan_for_Declaration_part( );
+                
+                if was_declaration then
+                    
+                    flush_and_recover();
+                    
+                elif not was_declaration and autodoc_read_line <> fail then
+                    
+                    autodoc_read_line := false;
+                    
+                fi;
+                
+            fi;
+            
+        od;
+        
+    od;
+    
+end );
