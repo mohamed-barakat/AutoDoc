@@ -193,7 +193,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     
     level_scope := 0;
     
-    flush_and_prepare_for_item := function()
+    flush_text_and_prepare_for_item := function()
         local node;
         
         if current_item.type = "ITEM" then
@@ -202,7 +202,11 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
         fi;
         
-        current_item := flush_and_recover();
+        if not current_item.type = "TEXT" or not current_item.text = [ ] then
+            
+            current_item := flush_and_recover();
+            
+        fi;
         
         current_item.node_type := "ITEM";
         
@@ -218,6 +222,14 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     
     flush_and_recover := function()
         local node;
+        
+        if IsBound( system_scope ) then
+            
+            current_item!.system := system_scope;
+            
+            Unbind( system_scope );
+            
+        fi;
         
         if IsBound( current_item ) then
             
@@ -244,6 +256,54 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             current_item.group := scope_group;
             
         fi;
+        
+    end;
+    
+    read_example := function()
+        local temp_string_list, temp_curr_line, temp_pos_comment;
+        
+        temp_string_list := [ ];
+        
+        while true do
+            
+            temp_curr_line := ReadLine( filestream );
+            
+            if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail then
+                
+                break;
+                
+            fi;
+            
+            NormalizeWhitespace( temp_curr_line );
+            
+            ##if is comment, simply remove comments.
+            temp_pos_comment := PositionSublist( temp_curr_line, "#!" );
+            
+            if temp_pos_comment <> fail then
+                
+                temp_curr_line := temp_curr_line{[ temp_pos_comment + 2 .. Length( temp_curr_line ) ]};
+                
+                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                
+                Add( temp_string_list, temp_curr_line );
+                
+                continue;
+                
+            else
+                
+                temp_curr_line := AutoDoc_RemoveSpacesAndComments( temp_curr_line );
+                
+                temp_curr_line := Concatenation( "gap> ", temp_curr_line );
+                
+                Add( temp_string_list, temp_curr_line );
+                
+                continue;
+                
+            fi;
+            
+        od;
+        
+        return temp_string_list;
         
     end;
     
@@ -427,29 +487,34 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
         end,
         
+        ## FIXME
         @Example := function()
             local content_string_list;
             
-            AutoDoc_Flush( current_item );
+            flush_and_recover();
             
             content_string_list := read_example();
             
+            ## FIXME: Does this really need different treatment?
             Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationExample( content_string_list, chapter_info ) );
-            
-            recover_item();
             
         end,
         
-        ##FIXME: This is hacky! You can do this better.
         @Author := function()
             
-            PushOptions( rec( AutoDoc_Author := current_command[ 2 ] ) );
+            if not IsBound( tree!.worksheet_author ) then
+                
+                tree!.worksheet_author := [ ];
+                
+            fi;
+                
+            Add( tree!.worksheet_author, current_command[ 2 ] );
             
         end,
         
         @Title := function()
             
-            PushOptions( rec( AutoDoc_Title := current_command[ 2 ] ) );
+            tree!.worksheet_title := current_command[ 2 ];
             
         end
         
