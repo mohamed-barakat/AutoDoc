@@ -210,13 +210,13 @@ InstallMethod( DocumentationNode,
         
         node := DocumentationItem( content );
         
-    elif type := "EXAMPLE" then
+    elif type = "EXAMPLE" then
         
         node := DocumentationExample( content.text, content.chapter_info );
         
         node!.level := content.level;
         
-    elif type := "DUMMY" then
+    elif type = "DUMMY" then
         
         node := DocumentationDummy( content.name, content.chapter_info );
         

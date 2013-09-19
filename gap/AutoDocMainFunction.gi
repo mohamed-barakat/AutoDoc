@@ -475,11 +475,7 @@ InstallGlobalFunction( CreateAutomaticDocumentation,
     fi;
     
     ##Use parser now.
-    for i in files_to_scan do
-        
-        AutoDoc_Parser_ReadFile( i );
-        
-    od;
+    AutoDoc_Parser_ReadFiles( files_to_scan, AUTOMATIC_DOCUMENTATION.tree );
     
     
     WriteDocumentation( AUTOMATIC_DOCUMENTATION.tree, path_to_xmlfiles );
@@ -641,11 +637,7 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     AUTOMATIC_DOCUMENTATION.path_to_xmlfiles := output_folder;
     
-    for filename in filelist do
-        
-        AutoDoc_Parser_ReadFile( filename );
-        
-    od;
+        AutoDoc_Parser_ReadFiles( filelist, AUTOMATIC_DOCUMENTATION.tree );
     
     title := ValueOption( "AutoDoc_Title" );
     
