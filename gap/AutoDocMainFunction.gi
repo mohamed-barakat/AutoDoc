@@ -605,7 +605,9 @@ InstallGlobalFunction( AutoDocWorksheet,
                        
   function( filelist )
     local folder, filename, folder_length, filestream, plain_filename, title, author, output_folder, testfile,
-          book_name, maketest_commands, commands, bibfile, bib_tmp;
+          book_name, maketest_commands, commands, bibfile, bib_tmp, tree, write_title_page;
+    
+    write_title_page := false;
     
     if IsString( filelist ) then
         
@@ -633,16 +635,34 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     output_folder := Directory( output_folder );
     
-    AUTOMATIC_DOCUMENTATION.tree := DocumentationTree();
+    tree := DocumentationTree();
     
     AUTOMATIC_DOCUMENTATION.path_to_xmlfiles := output_folder;
     
-        AutoDoc_Parser_ReadFiles( filelist, AUTOMATIC_DOCUMENTATION.tree );
+        AutoDoc_Parser_ReadFiles( filelist, tree );
     
-    title := ValueOption( "AutoDoc_Title" );
+    if IsBound( tree!.worksheet_title ) then
+        
+        title := tree!.worksheet_title;
+        
+    else
+        
+        title := fail;
+        
+    fi;
     
-    book_name := ValueOption( "BookName" );
+    if IsBound( tree!.worksheet_author ) then
+        
+        author := tree!.worksheet_author;
+        
+    else
+        
+        author := fail;
+        
+    fi;
     
+    if write_title_page = true then
+        
     if book_name = fail then
         
         if title = fail then
@@ -652,6 +672,20 @@ InstallGlobalFunction( AutoDocWorksheet,
         else
             
             book_name := ReplacedString( title, " ", "_" );
+            
+        fi;
+        
+    fi;
+    
+    if title = fail then
+        
+        if book_name = fail then
+            
+            title := filename{[ folder_length + 1 .. Length( filename ) ]};
+            
+        else
+            
+            title := book_name;
             
         fi;
         
@@ -672,6 +706,8 @@ InstallGlobalFunction( AutoDocWorksheet,
     AppendTo( filestream, "<Book Name=\"", book_name, "\">\n" );
     
     AppendTo( filestream, "<TitlePage>\n" );
+    
+    if tree!.
     
     if title <> fail then
         
