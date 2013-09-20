@@ -194,6 +194,10 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     
     level_scope := 0;
     
+    autodoc_read_line := false;
+    
+    chapter_info := [ ];
+    
     Scan_for_Declaration_part := function()
         local declare_position, current_type, filter_string, has_filters,
               position_parentesis;
@@ -754,7 +758,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
         end,
         
-        TEXT := function()
+        STRING := function()
             
             Add( current_string_list, current_command[ 2 ] );
             
@@ -769,7 +773,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         
         while true do
             
-            current_line := ReadLine( filestream );
+            current_line := Normalized_ReadLine( filestream );
             
             if current_line = fail then
                 
