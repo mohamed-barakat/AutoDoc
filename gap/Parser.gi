@@ -27,27 +27,6 @@ InstallGlobalFunction( Normalized_ReadLine,
 end );
 
 ##
-InstallGlobalFunction( AutoDoc_remove_trailing_and_beginning_whitespaces,
-                       
-  function( string )
-    
-    while Length( string ) > 0 and string[ 1 ] = ' ' do
-        
-        Remove( string, 1 );
-        
-    od;
-    
-    while Length( string ) > 0 and string[ Length( string ) ] = ' ' do
-        
-        Remove( string, Length( string ) );
-        
-    od;
-    
-    return string;
-    
-end );
-
-##
 InstallGlobalFunction( Scan_for_AutoDoc_Part,
                        
   function( line )
@@ -61,7 +40,7 @@ InstallGlobalFunction( Scan_for_AutoDoc_Part,
         
     fi;
     
-    line := AutoDoc_remove_trailing_and_beginning_whitespaces( line{[ position + 2 .. Length( line ) ]} );
+    line := StripBeginEnd( line{[ position + 2 .. Length( line ) ]}, " " );
     
     ## Scan for a command
     
@@ -244,11 +223,11 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
             od;
             
-            current_line := AutoDoc_remove_trailing_and_beginning_whitespaces( current_line );
+            current_line := StripBeginEnd( current_line, " " );
             
             current_item.name := current_line{ [ 1 .. Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) - 1 ] };
             
-            current_item.name := AutoDoc_remove_trailing_and_beginning_whitespaces( ReplacedString( current_item.name, "\"", "" ) );
+            current_item.name := StripBeginEnd( ReplacedString( current_item.name, "\"", "" ), " " );
             
             current_line := current_line{ [ Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) + 1 .. Length( current_line ) ] };
             
@@ -258,7 +237,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
                 while PositionSublist( current_line, "," ) = fail and PositionSublist( current_line, ");" ) = fail do
                     
-                    Append( filter_string, AutoDoc_remove_trailing_and_beginning_whitespaces( current_line ) );
+                    Append( filter_string, StripBeginEnd( current_line, " " ) );
                     
                     current_line := ReadLine( filestream );
                     
@@ -266,7 +245,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                     
                 od;
                 
-                Append( filter_string, AutoDoc_remove_trailing_and_beginning_whitespaces( current_line{ [ 1 .. Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) - 1 ] } ) );
+                Append( filter_string, StripBeginEnd( current_line{ [ 1 .. Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) - 1 ] }, " " ) );
                 
             elif has_filters = "List" then
                 
@@ -284,7 +263,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
                 while PositionSublist( current_line, "]" ) = fail do
                     
-                    Append( filter_string, AutoDoc_remove_trailing_and_beginning_whitespaces( current_line ) );
+                    Append( filter_string, StripBeginEnd( current_line, " " ) );
                     
                     current_line := ReadLine( filestream );
                     
@@ -292,7 +271,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                     
                 od;
                 
-                Append( filter_string, AutoDoc_remove_trailing_and_beginning_whitespaces( current_line{[ 1 .. PositionSublist( current_line, "]" ) - 1 ]} ) );
+                Append( filter_string, StripBeginEnd( current_line{[ 1 .. PositionSublist( current_line, "]" ) - 1 ]}, " " ) );
                 
             else
                 
@@ -373,7 +352,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             NormalizeWhitespace( current_item.name );
             
-            current_item.name := AutoDoc_remove_trailing_and_beginning_whitespaces( current_item.name );
+            current_item.name := StripBeginEnd( current_item.name, " " );
             
             while PositionSublist( current_line, "[" ) = fail do
                 
@@ -426,7 +405,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                     
                     while PositionSublist( current_line, ")" ) = fail do;
                         
-                        current_line := AutoDoc_remove_trailing_and_beginning_whitespaces( current_line );
+                        current_line := StripBeginEnd( current_line, " " );
                         
                         Append( filter_string, current_line );
                         
@@ -440,7 +419,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                     
                     NormalizeWhitespace( filter_string );
                     
-                    filter_string := AutoDoc_remove_trailing_and_beginning_whitespaces( filter_string );
+                    filter_string := StripBeginEnd( filter_string, " " );
                     
                     current_item.arguments := filter_string;
                     
@@ -716,7 +695,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             current_item.chapter_info := SplitString( current_command[ 2 ], "," );
             
-            current_item.chapter_info := List( current_item.chapter_info, i -> ReplacedString( AutoDoc_remove_trailing_and_beginning_whitespaces( i ), " ", "_" ) );
+            current_item.chapter_info := List( current_item.chapter_info, i -> ReplacedString( StripBeginEnd( i, " " ), " ", "_" ) );
             
         end,
         
