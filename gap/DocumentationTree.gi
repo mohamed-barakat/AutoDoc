@@ -92,7 +92,6 @@ BindGlobal( "TheTypeOfDocumentationTreeExampleNodes",
         NewType( TheFamilyOfDocumentationTreeNodes,
                 IsTreeForDocumentationExampleNodeRep ) );
 
-
 ###################################
 ##
 ## Constructors
@@ -111,7 +110,8 @@ InstallMethod( DocumentationTree,
                   nodes_by_name := rec( ),
                   groups := rec( ),
                   dummies := rec( ),
-                  contents_for_dummies := rec( )
+                  contents_for_dummies := rec( ),
+                  chunks := rec( )
             );
     
     ObjectifyWithAttributes( tree,
@@ -198,13 +198,9 @@ InstallMethod( DocumentationNode,
     
     type := content.node_type;
     
-    Unbind( content.node_type );
-    
     if type = "TEXT" then
         
         node := DocumentationText( content.text, content.chapter_info );
-        
-        node!.level := content.level;
         
     elif type = "ITEM" then
         
@@ -214,19 +210,17 @@ InstallMethod( DocumentationNode,
         
         node := DocumentationExample( content.text, content.chapter_info );
         
-        node!.level := content.level;
-        
     elif type = "DUMMY" then
         
         node := DocumentationDummy( content.name, content.chapter_info );
-        
-        node!.level := content.level;
         
     else
         
         Error( "unrecognised type" );
         
     fi;
+    
+    node!.level := content.level;
     
     return node;
     
@@ -239,20 +233,13 @@ InstallMethod( DocumentationText,
   function( text, chapter_info )
     local level, textnode;
     
-    level := ValueOption( "level_value" );
-    
-    if level = fail then
-        
-        level := 0;
-        
-    fi;
-    
     textnode := rec( content := text,
-                     level := level );
+                     level := 0 );
     
     ObjectifyWithAttributes( textnode,
                              TheTypeOfDocumentationTreeNodesForText,
-                             ChapterInfo, chapter_info );
+                             ChapterInfo, chapter_info
+                           );
     
     return textnode;
     
@@ -265,21 +252,13 @@ InstallMethod( DocumentationItem,
   function( entry_rec )
     local level, item, group;
     
-    level := ValueOption( "level_value" );
-    
-    if level = fail then
-        
-        level := 0;
-        
-    fi;
-    
     item := rec( content := entry_rec,
-                 level := level );
+                 level := 0 );
     
     if IsBound( entry_rec.group ) then
         
         item := rec( content_list := [ entry_rec ],
-                     level := level );
+                     level := 0 );
         
         ObjectifyWithAttributes( item,
                                  TheTypeOfDocumentationTreeNodesForGroup,
@@ -305,16 +284,8 @@ InstallMethod( DocumentationExample,
   function( string_list, chapter_info )
     local level, node;
     
-    level := ValueOption( "level_value" );
-    
-    if level = fail then
-        
-        level := 0;
-        
-    fi;
-    
     node := rec( content := string_list,
-                 level := level );
+                 level := 0 );
     
     ObjectifyWithAttributes( node, TheTypeOfDocumentationTreeExampleNodes,
                              ChapterInfo, chapter_info );
@@ -349,7 +320,8 @@ InstallMethod( DocumentationDummy,
   function( name, chapter_info )
     local node;
     
-    node := rec( chapter_info := chapter_info );
+    node := rec( chapter_info := chapter_info,
+                 level := 0 );
     
     ObjectifyWithAttributes( node, TheTypeOfDocumentationTreeDummyNodes,
                              Name, name );
