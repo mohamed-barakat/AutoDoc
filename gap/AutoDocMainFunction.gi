@@ -635,14 +635,10 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     output_folder := Directory( output_folder );
     
-    ## FIXME
-    AUTOMATIC_DOCUMENTATION.tree := DocumentationTree();
+    tree := DocumentationTree();
     
-    tree := AUTOMATIC_DOCUMENTATION.tree;
-    
-    AUTOMATIC_DOCUMENTATION.path_to_xmlfiles := output_folder;
-    
-        AutoDoc_Parser_ReadFiles( filelist, tree );
+        ## No default names here.
+        AutoDoc_Parser_ReadFiles( filelist, tree, rec( ) );
     
     if IsBound( tree!.worksheet_title ) then
         
@@ -694,7 +690,7 @@ InstallGlobalFunction( AutoDocWorksheet,
         
     fi;
     
-    WriteDocumentation( AUTOMATIC_DOCUMENTATION.tree, output_folder );
+    WriteDocumentation( tree, output_folder );
     
     filestream := AUTODOC_OutputTextFile( output_folder, Concatenation( book_name, ".xml" ) );
     
