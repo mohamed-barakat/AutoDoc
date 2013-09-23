@@ -96,7 +96,7 @@ end );
 ##
 InstallGlobalFunction( AutoDoc_Type_Of_Item,
                        
-  function( current_item, type )
+  function( current_item, type, default_chapter_data )
     local item_rec, entries, has_filters, ret_val;
     
     item_rec := current_item;
@@ -168,7 +168,7 @@ InstallGlobalFunction( AutoDoc_Type_Of_Item,
     item_rec.doc_stream_type := entries[ 2 ];
     
     if not IsBound( item_rec.chapter_info ) then
-        item_rec.chapter_info := AUTOMATIC_DOCUMENTATION.default_chapter.( entries[ 2 ] );
+        item_rec.chapter_info := default_chapter_data.( entries[ 2 ] );
     fi;
     
     if IsBound( ret_val ) and item_rec.return_value = false then
@@ -184,11 +184,13 @@ end );
 ##
 InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                        
-  function( filename_list, tree )
+  function( filename_list, tree, default_chapter_data )
     local current_item, flush_and_recover, chapter_info, current_string_list,
           Scan_for_Declaration_part, flush_and_prepare_for_item, current_line, filestream,
           level_scope, scope_group, read_example, command_function_record, autodoc_read_line,
-          current_command, was_declaration, filename, system_scope;
+          current_command, was_declaration, filename, system_scope, groupnumber;
+    
+    groupnumber := 0;
     
     level_scope := 0;
     
@@ -218,7 +220,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             current_type := current_line{ [ 1 .. position_parentesis - 1 ] };
             
-            has_filters := AutoDoc_Type_Of_Item( current_item, current_type );
+            has_filters := AutoDoc_Type_Of_Item( current_item, current_type, default_chapter_data );
             
             if has_filters = fail then
                 
@@ -632,9 +634,9 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             if current_command[ 2 ] = "" then
                 
-                AUTOMATIC_DOCUMENTATION.groupnumber := AUTOMATIC_DOCUMENTATION.groupnumber + 1;
+                groupnumber := groupnumber + 1;
                 
-                current_command[ 2 ] := Concatenation( "AutoDoc_generated_group", String( AUTOMATIC_DOCUMENTATION.groupnumber ) );
+                current_command[ 2 ] := Concatenation( "AutoDoc_generated_group", String( groupnumber ) );
                 
             fi;
             
@@ -740,7 +742,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             flush_and_recover();
             
-            Add( AUTOMATIC_DOCUMENTATION.tree, DocumentationDummy( current_command[ 2 ], chapter_info ) );
+            Add( tree, DocumentationDummy( current_command[ 2 ], chapter_info ) );
             
         end,
         
