@@ -110,3 +110,9 @@ IO_ForHomalg/: 6ef8f31 improved Subtitle/LongTitle
 
 Versions:
  2012.10.24
+
+k-Points/: 89fd7d1 some operations are now attributes
+
+Versions:
+2013.09.18 which is Mohamed's version
+2011.06.01 which is Alban's version
