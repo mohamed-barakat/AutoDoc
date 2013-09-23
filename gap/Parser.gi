@@ -31,13 +31,13 @@ InstallGlobalFunction( AutoDoc_remove_trailing_and_beginning_whitespaces,
                        
   function( string )
     
-    while string[ 1 ] = ' ' do
+    while Length( string ) > 0 and string[ 1 ] = ' ' do
         
         Remove( string, 1 );
         
     od;
     
-    while string[ Length( string ) ] = ' ' do
+    while Length( string ) > 0 and string[ Length( string ) ] = ' ' do
         
         Remove( string, Length( string ) );
         
@@ -153,8 +153,6 @@ InstallGlobalFunction( AutoDoc_Type_Of_Item,
         
         entries := [ "Var", "global_variables" ];
         
-        ret_val := fail;
-        
         has_filters := "No";
         
         item_rec.arguments := fail;
@@ -246,7 +244,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             current_item.name := current_line{ [ 1 .. Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) - 1 ] };
             
-            current_item.name := AutoDoc_remove_trailing_and_beginning_whitespaces( ReplacedString( current_item[ 2 ].name, "\"", "" ) );
+            current_item.name := AutoDoc_remove_trailing_and_beginning_whitespaces( ReplacedString( current_item.name, "\"", "" ) );
             
             current_line := current_line{ [ Minimum( [ PositionSublist( current_line, "," ), PositionSublist( current_line, ");" ) ] ) + 1 .. Length( current_line ) ] };
             
@@ -301,6 +299,32 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             if filter_string <> false then
                 
                 current_item.tester_names := filter_string;
+                
+                ##Adjust arguments
+                
+                if not IsBound( current_item.arguments ) then
+                    
+                    if has_filters = "One" then
+                        
+                        current_item.arguments := "arg";
+                        
+                    elif has_filters = "List" then
+                        
+                        current_item.arguments := List( [ 1 .. Length( SplitString( filter_string, "," ) ) ], i -> Concatenation( "arg", String( i ) ) );
+                        
+                        if Length( current_item.arguments ) = 1 then
+                            
+                            current_item.arguments := "arg";
+                            
+                        else
+                            
+                            current_item.arguments := JoinStringsWithSeparator( current_item.arguments, "," );
+                            
+                        fi;
+                        
+                    fi;
+                    
+                fi;
                 
             fi;
             
@@ -369,10 +393,10 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             NormalizeWhitespace( filter_string );
             
-            current_item[ 2 ].tester_names := filter_string;
+            current_item.tester_names := filter_string;
             
             ##Maybe find some argument names
-            if not IsBound( current_item[ 2 ].arguments ) then
+            if not IsBound( current_item.arguments ) then
             
                 while PositionSublist( current_line, "function(" ) = fail and PositionSublist( current_line, ");" ) = fail do
                     
@@ -423,15 +447,15 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
     flush_and_prepare_for_item := function()
         local node;
         
-        if current_item.type = "ITEM" then
+        if current_item.node_type = "ITEM" then
             
             return;
             
         fi;
         
-        if not current_item.type = "TEXT" or not current_item.text = [ ] then
+        if not current_item.node_type = "TEXT" or not current_item.text = [ ] then
             
-            current_item := flush_and_recover();
+            flush_and_recover();
             
         fi;
         
@@ -565,20 +589,22 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         @Chapter := function()
             local scope_chapter;
             
+            flush_and_recover();
+            
             scope_chapter := ReplacedString( current_command[ 2 ], " ", "_" );
             
-            ChapterInTree( AUTOMATIC_DOCUMENTATION.tree, scope_chapter );
+            ChapterInTree( tree, scope_chapter );
             
             chapter_info[ 1 ] := scope_chapter;
             
             Unbind( chapter_info[ 2 ] );
             
-            flush_and_recover();
-            
         end,
         
         @Section := function()
             local scope_section;
+            
+            flush_and_recover();
             
             if not IsBound( chapter_info[ 1 ] ) then
                 
@@ -588,19 +614,17 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             scope_section := ReplacedString( current_command[ 2 ], " ", "_" );
             
-            SectionInTree( AUTOMATIC_DOCUMENTATION.tree, chapter_info[ 1 ], scope_section );
+            SectionInTree( tree, chapter_info[ 1 ], scope_section );
             
             chapter_info[ 2 ] := scope_section;
-            
-            flush_and_recover();
             
         end,
         
         @EndSection := function()
             
-            Unbind( chapter_info[ 2 ] );
-            
             flush_and_recover();
+            
+            Unbind( chapter_info[ 2 ] );
             
         end,
         
@@ -720,7 +744,6 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
         end,
         
-        ## FIXME
         @System := function()
             
             flush_and_recover();
@@ -729,7 +752,6 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
         end,
         
-        ## FIXME
         @Example := function()
             
             flush_and_recover();

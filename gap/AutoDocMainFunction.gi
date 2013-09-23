@@ -635,7 +635,10 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     output_folder := Directory( output_folder );
     
-    tree := DocumentationTree();
+    ## FIXME
+    AUTOMATIC_DOCUMENTATION.tree := DocumentationTree();
+    
+    tree := AUTOMATIC_DOCUMENTATION.tree;
     
     AUTOMATIC_DOCUMENTATION.path_to_xmlfiles := output_folder;
     
@@ -661,8 +664,8 @@ InstallGlobalFunction( AutoDocWorksheet,
         
     fi;
     
-    if write_title_page = true then
-        
+    book_name := ValueOption( "BookName" );
+    
     if book_name = fail then
         
         if title = fail then
@@ -706,8 +709,6 @@ InstallGlobalFunction( AutoDocWorksheet,
     AppendTo( filestream, "<Book Name=\"", book_name, "\">\n" );
     
     AppendTo( filestream, "<TitlePage>\n" );
-    
-    if tree!.
     
     if title <> fail then
         

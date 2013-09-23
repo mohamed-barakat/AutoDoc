@@ -670,9 +670,9 @@ InstallMethod( WriteDocumentation,
                [ IsTreeForDocumentationNodeForTextRep, IsStream ],
                
   function( node, filestream )
-    local text, i;
+    local text, i, level;
     
-    if node!.level < ValueOption( "level_value" ) then
+    if node!.level > ValueOption( "level_value" ) then
         
         return;
         
