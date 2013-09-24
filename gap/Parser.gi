@@ -876,6 +876,8 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                     
                 fi;
                 
+                continue;
+                
             fi;
             
             current_line := current_command[ 2 ];
