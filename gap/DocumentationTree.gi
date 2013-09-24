@@ -47,6 +47,15 @@ BindGlobal( "TheTypeOfDocumentationTreeNodesForSection",
         NewType( TheFamilyOfDocumentationTreeNodes,
                 IsTreeForDocumentationNodeForSectionRep ) );
 
+## Subsection node
+DeclareRepresentation( "IsTreeForDocumentationNodeForSubsectionRep",
+        IsTreeForDocumentationNodeRep,
+        [ ] );
+
+BindGlobal( "TheTypeOfDocumentationTreeNodesForSubsection",
+        NewType( TheFamilyOfDocumentationTreeNodes,
+                IsTreeForDocumentationNodeForSubsectionRep ) );
+
 ## Text node
 DeclareRepresentation( "IsTreeForDocumentationNodeForTextRep",
         IsTreeForDocumentationNodeRep,
@@ -180,6 +189,35 @@ InstallMethod( DocumentationSection,
                              );
     
     return section;
+    
+end );
+
+##
+InstallMethod( DocumentationSubsection,
+               [ IsString ],
+               
+  function( name )
+    local level, subsection;
+    
+    level := ValueOption( "level_value" );
+    
+    if level = fail then
+        
+        level := 0;
+        
+    fi;
+    
+    subsection := rec( nodes := [ ],
+                       nodes_by_name := rec( ),
+                       level := level );
+    
+    ObjectifyWithAttributes( subsection,
+                             TheTypeOfDocumentationTreeNodesForSubsection,
+                             Name, name,
+                             IsEmptyNode, true
+                            );
+    
+    return subsection;
     
 end );
 
@@ -384,6 +422,62 @@ InstallMethod( SectionInTree,
 end );
 
 ##
+InstallMethod( SubsectionInTree,
+               [ IsTreeForDocumentation, IsString, IsString, IsString ],
+               
+  function( tree, chapter_name, section_name, subsection_name )
+    local section, subsection;
+    
+    section := SectionInTree( tree, chapter_name, section_name );
+    
+    if IsBound( section!.nodes_by_name.( subsection_name ) ) then
+        
+        return section!.nodes_by_name.( subsection_name );
+        
+    fi;
+    
+    subsection := DocumentationSubsection( subsection_name );
+    
+    Add( section!.nodes, subsection );
+    
+    section!.nodes_by_name.( subsection_name ) := subsection;
+    
+    return subsection;
+    
+end );
+
+##
+InstallMethod( EntryNode,
+               [ IsTreeForDocumentation, IsList ],
+               
+  function( tree, chapter_info )
+    local length, arg_array;
+    
+    length := Length( chapter_info );
+    
+    arg_array := Concatenation( [ tree ], chapter_info );
+    
+    if length = 1 then
+        
+        return CallFuncList( ChapterInTree, arg_array );
+        
+    elif length = 2 then
+        
+        return CallFuncList( SectionInTree, arg_array );
+        
+    elif length = 3 then
+        
+        return CallFuncList( SubsectionInTree, arg_array );
+        
+    else
+        
+        Error( "bad chapter_info type" );
+        
+    fi;
+    
+end );
+
+##
 InstallMethod( Add,
                "for dummy fillers",
                [ IsTreeForDocumentation, IsTreeForDocumentationNodeRep and HasDummyName ],
@@ -421,15 +515,7 @@ InstallMethod( Add,
     
     chapter_info := ChapterInfo( node );
     
-    if Length( chapter_info ) = 1 then
-        
-        entry_node := ChapterInTree( tree, chapter_info[ 1 ] );
-        
-    else
-        
-        entry_node := SectionInTree( tree, chapter_info[ 1 ], chapter_info[ 2 ] );
-        
-    fi;
+    entry_node := EntryNode( tree, chapter_info );
     
     ResetFilterObj( entry_node, IsEmptyNode );
     
@@ -447,15 +533,7 @@ InstallMethod( Add,
     
     chapter_info := ChapterInfo( node );
     
-    if Length( chapter_info ) = 1 then
-        
-        entry_node := ChapterInTree( tree, chapter_info[ 1 ] );
-        
-    else
-        
-        entry_node := SectionInTree( tree, chapter_info[ 1 ], chapter_info[ 2 ] );
-        
-    fi;
+    entry_node := EntryNode( tree, chapter_info );
     
     ResetFilterObj( entry_node, IsEmptyNode );
     
@@ -473,9 +551,9 @@ InstallMethod( Add,
     
     chapter_info := ChapterInfo( node );
     
-    if Length( chapter_info ) < 2 then
+    if Length( chapter_info ) <> 2 then
         
-        Error( "chapter info of ManItem must contain section" );
+        Error( "ManItem must be contained in section" );
         
     fi;
     
@@ -538,19 +616,13 @@ InstallMethod( Add,
         
     fi;
     
-    if Length( chapter_info ) > 1 then
-        
-        entry_node := SectionInTree( tree, chapter_info[ 1 ], chapter_info[ 2 ] );
-        
-    else
-        
-        entry_node := ChapterInTree( tree, chapter_info[ 1 ] );
-        
-    fi;
+    entry_node := EntryNode( tree, chapter_info );
     
     Add( entry_node!.nodes, node );
     
     entry_node!.nodes_by_name.(name) := node;
+    
+    ResetFilterObj( entry_node, IsEmptyNode );
     
     tree!.dummies.(name) := node;
     
@@ -717,11 +789,56 @@ InstallMethod( WriteDocumentation,
     
     for i in node!.nodes do
         
-        WriteDocumentation( i, filestream );
+        if IsTreeForDocumentationNodeForSubsectionRep( i ) then
+            
+            WriteDocumentation( i, filestream, chapter_name, name );
+            
+        else
+            
+            WriteDocumentation( i, filestream );
+            
+        fi;
         
     od;
     
     AppendTo( filestream, "</Section>\n\n" );
+    
+end );
+
+##
+InstallMethod( WriteDocumentation,
+               [ IsTreeForDocumentationNodeForSubsectionRep, IsStream, IsString, IsString ],
+               
+  function( node, filestream, chapter_name, section_name )
+    local i, name, replaced_name;
+
+    name := Name( node );
+    
+    if node!.level > ValueOption( "level_value" ) then
+        
+        return;
+        
+    fi;
+    
+    if ForAll( node!.nodes, IsEmptyNode ) then
+        
+        return;
+        
+    fi;
+    
+    AppendTo( filestream, Concatenation( [ "<Subsection Label=\"Chapter_", chapter_name, "_Section_", section_name, "_Subsection_", name, "_automatically_generated_documentation_parts\">\n" ] ) );
+    
+    replaced_name := ReplacedString( name, "_", " " );
+    
+    AppendTo( filestream, Concatenation( [ "<Heading>", replaced_name, "</Heading>\n\n" ] ) );
+    
+    for i in node!.nodes do
+        
+        WriteDocumentation( i, filestream );
+        
+    od;
+    
+    AppendTo( filestream, "</Subsection>\n\n" );
     
 end );
 
