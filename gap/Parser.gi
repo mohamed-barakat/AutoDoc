@@ -590,6 +590,8 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             Unbind( chapter_info[ 2 ] );
             
+            Unbind( chapter_info[ 3 ] );
+            
         end,
         
         @Section := function()
@@ -607,6 +609,8 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             SectionInTree( tree, chapter_info[ 1 ], scope_section );
             
+            Unbind( chapter_info[ 3 ] );
+            
             chapter_info[ 2 ] := scope_section;
             
         end,
@@ -616,6 +620,35 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             flush_and_recover();
             
             Unbind( chapter_info[ 2 ] );
+            
+            Unbind( chapter_info[ 3 ] );
+            
+        end,
+        
+        @Subsection := function()
+            local scope_subsection;
+            
+            if not IsBound( chapter_info[ 1 ] ) or not IsBound( chapter_info[ 2 ] ) then
+                
+                Error( "no subsection without chapter and section" );
+                
+            fi;
+            
+            flush_and_recover();
+            
+            scope_subsection := ReplacedString( current_command[ 2 ], " ", "_" );
+            
+            SubsectionInTree( tree, chapter_info[ 1 ], chapter_info[ 2 ], scope_subsection );
+            
+            chapter_info[ 3 ] := scope_subsection;
+            
+        end,
+        
+        @EndSubsection := function()
+            
+            flush_and_recover();
+            
+            Unbind( chapter_info[ 3 ] );
             
         end,
         
