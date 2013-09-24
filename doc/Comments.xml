@@ -142,6 +142,29 @@ Closes the current section.
 ]]></Listing>
 </Subsection>
 
+<Subsection Label="@Subsection">
+<Index Key="@Subsection"><C>@Subsection</C></Index>
+<Heading>@Subsection <A>name</A></Heading>
+Sets a subsection like chapter sets a chapter.
+
+<Listing><![CDATA[
+#! @Subsection My first manual subsection
+#!  In this subsection I am going to document my first example.
+]]></Listing>
+</Subsection>
+
+<Subsection Label="@EndSubsection">
+<Index Key="@EndSubsection"><C>@EndSubsection</C></Index>
+<Heading>@EndSubsection</Heading>
+Closes the current subsection.
+
+<Listing><![CDATA[
+#! @EndSubsection
+#### The following text again belongs to the section
+#! Now we are in the section again
+]]></Listing>
+</Subsection>
+
 <Subsection Label="@AutoDoc">
 <Index Key="@AutoDoc"><C>@AutoDoc</C></Index>
 <Heading>@AutoDoc</Heading>
