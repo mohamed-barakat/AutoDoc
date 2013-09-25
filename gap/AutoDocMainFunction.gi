@@ -605,7 +605,7 @@ InstallGlobalFunction( AutoDocWorksheet,
                        
   function( filelist )
     local folder, filename, folder_length, filestream, plain_filename, title, author, output_folder, testfile,
-          book_name, maketest_commands, commands, bibfile, bib_tmp, tree, write_title_page;
+          book_name, maketest_commands, commands, bibfile, bib_tmp, tree, write_title_page, table_of_contents;
     
     write_title_page := false;
     
@@ -721,6 +721,14 @@ InstallGlobalFunction( AutoDocWorksheet,
     fi;
     
     AppendTo( filestream, "</TitlePage>" );
+    
+    table_of_contents := ValueOption( "TableOfContents" );
+    
+    if table_of_contents = true then
+        
+        AppendTo( filestream, "<TableOfContents/>\n" );
+        
+    fi;
     
     AppendTo( filestream, "<Body>\n" );
     
