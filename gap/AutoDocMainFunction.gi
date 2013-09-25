@@ -51,7 +51,7 @@ InstallGlobalFunction( CreateDefaultChapterData,
         
     od;
     
-    return true;
+    return default_chapter_record;
     
 end );
 
@@ -355,7 +355,8 @@ InstallGlobalFunction( CreateAutomaticDocumentation,
 
   function( arg )
     local package_name, path_to_xmlfiles, create_full_docu, introduction_list, entities, 
-          dependencies, intro, chapter_record, section_stream, intro_string, group_names, current_group, files_to_scan, i;
+          dependencies, intro, chapter_record, section_stream, intro_string, group_names, current_group, files_to_scan, i,
+          default_chapter_record, tree;
     
     files_to_scan := ValueOption( "files_to_scan" );
     
@@ -385,7 +386,7 @@ InstallGlobalFunction( CreateAutomaticDocumentation,
         create_full_docu := false;
     fi;
     
-    CreateDefaultChapterData( package_name );
+    default_chapter_record := CreateDefaultChapterData( package_name );
     
     AUTOMATIC_DOCUMENTATION.path_to_xmlfiles := path_to_xmlfiles;
     
@@ -434,9 +435,9 @@ InstallGlobalFunction( CreateAutomaticDocumentation,
         
     fi;
     
-    AUTOMATIC_DOCUMENTATION.groupnumber := 0;
-    
     AUTOMATIC_DOCUMENTATION.tree := DocumentationTree( );
+    
+    tree := AUTOMATIC_DOCUMENTATION.tree;
     
     if IsBound( introduction_list ) then
       
@@ -475,14 +476,9 @@ InstallGlobalFunction( CreateAutomaticDocumentation,
     fi;
     
     ##Use parser now.
-    for i in files_to_scan do
-        
-        AutoDoc_Parser_ReadFile( i );
-        
-    od;
+    AutoDoc_Parser_ReadFiles( files_to_scan, AUTOMATIC_DOCUMENTATION.tree, default_chapter_record );
     
-    
-    WriteDocumentation( AUTOMATIC_DOCUMENTATION.tree, path_to_xmlfiles );
+    WriteDocumentation( tree, path_to_xmlfiles );
     
     return true;
 
@@ -609,7 +605,9 @@ InstallGlobalFunction( AutoDocWorksheet,
                        
   function( filelist )
     local folder, filename, folder_length, filestream, plain_filename, title, author, output_folder, testfile,
-          book_name, maketest_commands, commands, bibfile, bib_tmp;
+          book_name, maketest_commands, commands, bibfile, bib_tmp, tree, write_title_page, table_of_contents;
+    
+    write_title_page := false;
     
     if IsString( filelist ) then
         
@@ -637,17 +635,30 @@ InstallGlobalFunction( AutoDocWorksheet,
     
     output_folder := Directory( output_folder );
     
-    AUTOMATIC_DOCUMENTATION.tree := DocumentationTree();
+    tree := DocumentationTree();
     
-    AUTOMATIC_DOCUMENTATION.path_to_xmlfiles := output_folder;
+        ## No default names here.
+        AutoDoc_Parser_ReadFiles( filelist, tree, rec( ) );
     
-    for filename in filelist do
+    if IsBound( tree!.worksheet_title ) then
         
-        AutoDoc_Parser_ReadFile( filename );
+        title := tree!.worksheet_title;
         
-    od;
+    else
+        
+        title := fail;
+        
+    fi;
     
-    title := ValueOption( "AutoDoc_Title" );
+    if IsBound( tree!.worksheet_author ) then
+        
+        author := tree!.worksheet_author;
+        
+    else
+        
+        author := fail;
+        
+    fi;
     
     book_name := ValueOption( "BookName" );
     
@@ -665,7 +676,21 @@ InstallGlobalFunction( AutoDocWorksheet,
         
     fi;
     
-    WriteDocumentation( AUTOMATIC_DOCUMENTATION.tree, output_folder );
+    if title = fail then
+        
+        if book_name = fail then
+            
+            title := filename{[ folder_length + 1 .. Length( filename ) ]};
+            
+        else
+            
+            title := book_name;
+            
+        fi;
+        
+    fi;
+    
+    WriteDocumentation( tree, output_folder );
     
     filestream := AUTODOC_OutputTextFile( output_folder, Concatenation( book_name, ".xml" ) );
     
@@ -696,6 +721,14 @@ InstallGlobalFunction( AutoDocWorksheet,
     fi;
     
     AppendTo( filestream, "</TitlePage>" );
+    
+    table_of_contents := ValueOption( "TableOfContents" );
+    
+    if table_of_contents = true then
+        
+        AppendTo( filestream, "<TableOfContents/>\n" );
+        
+    fi;
     
     AppendTo( filestream, "<Body>\n" );
     

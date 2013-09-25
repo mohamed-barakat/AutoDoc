@@ -44,6 +44,13 @@ DeclareOperation( "DocumentationChapter",
 DeclareOperation( "DocumentationSection",
                   [ IsString ] );
 
+DeclareOperation( "DocumentationSubsection",
+                  [ IsString ] );
+
+## MetaOperation for the ones below.
+DeclareOperation( "DocumentationNode",
+                  [ IsRecord ] );
+
 DeclareOperation( "DocumentationText",
                   [ IsList, IsList ] );
 
@@ -68,6 +75,12 @@ DeclareOperation( "ChapterInTree",
 DeclareOperation( "SectionInTree",
                   [ IsTreeForDocumentation, IsString, IsString ] );
 
+DeclareOperation( "SubsectionInTree",
+                  [ IsTreeForDocumentation, IsString, IsString, IsString ] );
+
+DeclareOperation( "EntryNode",
+                  [ IsTreeForDocumentation, IsList ] );
+
 DeclareOperation( "GroupInTree",
                   [ IsTreeForDocumentation, IsString ] );
 
@@ -91,6 +104,9 @@ DeclareOperation( "WriteDocumentation",
 
 DeclareOperation( "WriteDocumentation",
                   [ IsTreeForDocumentationNode, IsStream, IsString ] );
+
+DeclareOperation( "WriteDocumentation",
+                  [ IsTreeForDocumentationNode, IsStream, IsString, IsString ] );
 
 DeclareOperation( "WriteDocumentation",
                   [ IsTreeForDocumentationNode, IsStream, IsDirectory ] );
