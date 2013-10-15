@@ -36,3 +36,9 @@ Blocks/: 56a37b6 more efficient code
 
 Versions:
 2013.07.06 which is Mohamed's version
+
+CombinatoricsForHomalg/: 70a85de declared and installed LeadingCoefficientOfPoincarePolynomial
+
+Versions:
+2013.09.21 which is Mohamed's version
+2013.06.07 which is Sebastian's version
