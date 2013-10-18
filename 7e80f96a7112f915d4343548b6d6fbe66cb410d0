@@ -116,3 +116,9 @@ k-Points/: 2ed33fa outsourced declarations of module attributes
 Versions:
 2013.09.19 which is Mohamed's version
 2011.06.01 which is Alban's version
+
+LessGenerators/: 12ea991 added missing LessGenerators/examples/doc/*.g to makefile
+
+Versions:
+2013.08.08 which is Mohamed's version
+2013.07.20 which is Vinay's version
