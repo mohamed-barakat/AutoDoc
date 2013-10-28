@@ -494,10 +494,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         
     end;
     
-    read_example := function()
+    read_example := function( is_tested_example )
         local temp_string_list, temp_curr_line, temp_pos_comment, is_following_line;
         
         current_item.node_type := "EXAMPLE";
+        
+        current_item.is_tested_example := is_tested_example;
         
         temp_string_list := current_item.text;
         
@@ -513,7 +515,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
             fi;
             
-            if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail then
+            if filestream = fail or PositionSublist( temp_curr_line, "@EndExample" ) <> fail or PositionSublist( temp_curr_line, "@Log" ) <> fail then
                 
                 break;
                 
@@ -791,7 +793,17 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
             
             flush_and_recover();
             
-            read_example();
+            read_example( true );
+            
+            flush_and_recover();
+            
+        end,
+        
+        @Log := function()
+            
+            flush_and_recover() ;
+            
+            read_example( false );
             
             flush_and_recover();
             
@@ -874,6 +886,44 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         @Date := function()
             
             tree!.worksheet_date := current_command[ 2 ];
+            
+        end,
+        
+        @Acknowledgements := function()
+            
+            flush_and_recover();
+            
+            Unbind( current_item );
+            
+            if not IsBound( tree!.acknowledgements ) then
+                
+                tree!.acknowledgements := [ ];
+                
+            fi;
+            
+            current_string_list := tree!.acknowledgements;
+            
+        end,
+        
+        @URL := function()
+            
+            tree!.worksheet_URL_string := current_command[ 2 ];
+            
+        end,
+        
+        @Abstract := function( )
+            
+            flush_and_recover( );
+            
+            Unbind( current_item );
+            
+            if not IsBound( tree!.abstract ) then
+                
+                tree!.abstract := [ ];
+                
+            fi;
+            
+            current_string_list := tree!.abstract;
             
         end
         
