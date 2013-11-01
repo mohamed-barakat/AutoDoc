@@ -38,3 +38,8 @@ AutomaticDocumentation/: 98f72ff Merge pull request #1 from sebasguts/master
 
 Versions:
 2012.08.06 which is Sebas' version
+
+Blocks/: 76e4eca IsLowerPartExtensionOfAffineSpaces now uses the whole remaining chain each step
+
+Versions:
+2013.10.30 which is Mohamed's version
