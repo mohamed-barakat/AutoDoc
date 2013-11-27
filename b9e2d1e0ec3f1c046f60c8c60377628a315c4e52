@@ -180,3 +180,9 @@ PolymakeInterface/: 249285a Added function for f vector.
 
 Versions:
 2013.07.29 which is Sebas' version
+
+PrimaryDecomposition/: f526d2a Merge pull request #10 from HemEM/master
+
+Versions:
+2013.10.27 which is Mohamed's version
+2013.11.02 which is Eva Maria's version
