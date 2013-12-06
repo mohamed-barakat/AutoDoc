@@ -137,3 +137,11 @@ LetterPlace/: 6260b62 comply with the new GAPDoc testing methods
 Versions:
 2011.11.16 which is Max' version
 2012.09.21 which is Mohamed's version
+
+LocalizeRingForHomalg/: bc9abcd Merge pull request #3 from sebasguts/master
+
+Versions:
+2011.04.26 which is Markus' version
+2013.10.25 which is Mohamed's version
+2013.07.15 which is Vinay's version
+2013.11.11 which is Sebas' version
