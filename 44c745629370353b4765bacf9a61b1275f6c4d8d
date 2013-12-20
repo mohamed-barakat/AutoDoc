@@ -220,3 +220,10 @@ Versions:
 test_suite/: a8cf244 comply with GAP4.5
 
 Versions:
+
+ToolsForHomalg/: 01df939 declared and installed PrimePowerExponent
+
+Versions:
+2011.09.12 which is Markus' version
+2013.12.12 which is Mohamed's version
+2013.11.11 which is Sebas' version
