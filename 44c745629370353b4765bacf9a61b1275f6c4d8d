@@ -174,3 +174,9 @@ PolymakeInterface/: 3fb6975 new doc style.
 
 Versions:
 2013.07.29 which is Sebas' version
+
+PrimaryDecomposition/: 962e9ce MinimalPolynomial now uses UnusedVariableName
+
+Versions:
+2013.10.27 which is Mohamed's version
+2013.11.02 which is Eva Maria's version
