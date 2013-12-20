@@ -60,3 +60,8 @@ Convex/: 13ef65f Renamed toric star.
 
 Versions:
 2013.12.05 which is Sebas' version
+
+D-Modules/: ac84ded declared and installed FiltrationByOrder
+
+Versions:
+ 2013.09.16
