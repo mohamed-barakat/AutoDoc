@@ -38,3 +38,8 @@ AutomaticDocumentation/: 98f72ff Merge pull request #1 from sebasguts/master
 
 Versions:
 2012.08.06 which is Sebas' version
+
+Blocks/: 8e5407d replaced BlocksInfo -> AssociatedTableBlock
+
+Versions:
+2013.12.30 which is Mohamed's version
