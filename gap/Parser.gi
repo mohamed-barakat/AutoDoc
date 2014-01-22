@@ -141,6 +141,16 @@ InstallGlobalFunction( AutoDoc_Type_Of_Item,
         
         item_rec!.arguments := fail;
         
+    elif type = "InfoClass" then
+        
+        entries := [ "InfoClass", "info_classes" ];
+        
+        has_filters := "No";
+        
+        item_rec!.arguments := fail;
+        
+        item_rec!.return_value := false;
+        
     else
         
         return fail;
@@ -173,7 +183,8 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
           Scan_for_Declaration_part, flush_and_prepare_for_item, current_line, filestream,
           level_scope, scope_group, read_example, command_function_record, autodoc_read_line,
           current_command, was_declaration, filename, system_scope, groupnumber, chunk_list, rest_of_file_skipped,
-          context_stack, new_man_item, add_man_item, Reset, read_code, title_item, title_item_list, plain_text_mode,install_tmp_func;
+          context_stack, new_man_item, add_man_item, Reset, read_code, title_item, title_item_list, plain_text_mode,install_tmp_func,
+          current_line_unedited;
     
     groupnumber := 0;
     
@@ -881,6 +892,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         
         @EndSystem := function()
             
+            if autodoc_read_line = true then
+                
+                autodoc_read_line := false;
+                
+            fi;
+            
             if context_stack <> [ ] then
                 
                 current_item := Remove( context_stack );
@@ -912,14 +929,25 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         end,
         
         STRING := function()
+            local comment_pos;
             
-            if current_command[ 2 ] = "" then
+            if not IsBound( current_item ) or current_command[ 2 ] = "" then
                 
                 return;
                 
             fi;
             
-            Add( current_item, current_command[ 2 ] );
+            comment_pos := PositionSublist( current_line_unedited, "#!" );
+            
+            if comment_pos = fail then
+                
+                Error( "something went wrong" );
+                
+            fi;
+            
+            current_line_unedited := current_line_unedited{[ comment_pos + 2 .. Length( current_line_unedited ) ]};
+            
+            Add( current_item, current_line_unedited );
             
         end,
         
@@ -942,6 +970,12 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
         end,
         
         @EndLatexOnly := function()
+            
+            if autodoc_read_line = true then
+                
+                autodoc_read_line := false;
+                
+            fi;
             
             Add( current_item, "</Alt>" );
             
@@ -1045,7 +1079,7 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
             fi;
             
-            current_line := Normalized_ReadLine( filestream );
+            current_line := ReadLine( filestream );
             
             if current_line = fail then
                 
@@ -1053,17 +1087,21 @@ InstallGlobalFunction( AutoDoc_Parser_ReadFiles,
                 
             fi;
             
+            current_line_unedited := ShallowCopy( current_line );
+            
+            NormalizeWhitespace( current_line );
+            
             current_command := Scan_for_AutoDoc_Part( current_line, plain_text_mode );
             
             if current_command[ 1 ] <> false then
-                
-                command_function_record.(current_command[ 1 ])();
                 
                 if autodoc_read_line <> fail then
                     
                     autodoc_read_line := true;
                     
                 fi;
+                
+                command_function_record.(current_command[ 1 ])();
                 
                 continue;
                 
