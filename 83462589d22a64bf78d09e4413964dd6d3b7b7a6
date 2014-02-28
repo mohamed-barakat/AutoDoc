@@ -26,3 +26,10 @@ Versions:
 2013.07.06 which is Mohamed's version
 2013.10.08 which is Thomas' version
 2013.09.03 which is Martin's version
+
+AutoDoc/: 8346258 Fixed a strange bug in gapdoc_latex_options
+
+Versions:
+2014.02.20 which is Sebas' version
+2014.01.03 which is Max' version
+2013.11.01 which is Mohamed's version
