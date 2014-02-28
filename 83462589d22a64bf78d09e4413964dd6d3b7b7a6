@@ -48,3 +48,10 @@ BoijSoederberg/: 8e7b365 TateSpectralSequences
 
 Versions:
  1.4
+
+CombinatoricsForHomalg/: 8562d28 installed multiplication with rational in EG_Module.gi
+
+Versions:
+2014.02.23 which is Mohamed's version
+2013.06.07 which is Sebastian's version
+2013.11.07 which is Sebas version
