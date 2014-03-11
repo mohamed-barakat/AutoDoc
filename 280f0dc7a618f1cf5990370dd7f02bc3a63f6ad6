@@ -79,3 +79,7 @@ ExamplesForHomalg/: d32bd4c added three example files
 
 Versions:
  2013.07.05
+
+ForgetfulFunctor/: 775fd5e GetGenerators( h ){[1..2]} -> {[1,81]}
+
+Versions:
