@@ -84,3 +84,8 @@ Versions:
 ForgetfulFunctor/: 775fd5e GetGenerators( h ){[1..2]} -> {[1,81]}
 
 Versions:
+
+Gauss/: fe16dd8 improved EchelonMatTransformationDestructive to take care of GF(2^d)
+
+Versions:
+ 2013.06.26
