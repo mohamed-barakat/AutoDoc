@@ -136,3 +136,10 @@ k-Points/: 2ed33fa outsourced declarations of module attributes
 Versions:
 2013.09.19 which is Mohamed's version
 2011.06.01 which is Alban's version
+
+LessGenerators/: 08f16a6 Merge pull request #20 from wagh/master
+
+Versions:
+2013.08.11 which is Mohamed's version
+2013.08.12 which is Vinay's version
+2013.11.06 which is Sebas' version
