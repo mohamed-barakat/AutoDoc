@@ -264,3 +264,9 @@ ToricVarieties/: fa30975 4ti2Interface does not support empty groebner basis.
 
 Versions:
 2014.09.01 which is Sebas' version
+
+VirtualCAS/: 43f3cd2 comply with the new GAPDoc testing methods
+
+Versions:
+2011.05.20 which is Andreas' version
+2012.09.21 which is Mohamed's version
