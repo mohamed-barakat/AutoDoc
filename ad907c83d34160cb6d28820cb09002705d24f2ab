@@ -94,3 +94,12 @@ GaussForHomalg/: 346da06 create a globally defined field of rationals HOMALG_MAT
 
 Versions:
  2013.09.20
+
+GradedModules/: 7824f06 fixed BettiTableOverCoeffcientsRing to work with right modules
+
+Versions:
+2014.08.27 which is Markus' version
+2014.09.14 which is Mohamed's version
+2011.05.05 which is Sebastian's version
+2014.07.25 which is Sepp's version
+2013.08.08 which is Sebas' version
