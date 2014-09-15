@@ -61,3 +61,8 @@ Conley/: b254f18 UnderlyingSet is now an attribute for IsPoset
 
 Versions:
  2012.10.25
+
+Convex/: 8fb97cb Updated dependencies.
+
+Versions:
+2014.08.29 which is Sebas' version
