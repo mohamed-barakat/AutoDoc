@@ -221,3 +221,11 @@ SCSCP_ForHomalg/: a41318f comply with the new GAPDoc testing methods
 
 Versions:
  2011.12.17
+
+Sheaves/: 518933d again fix in fix: HasAmbientRing
+
+Versions:
+2011.08.21 which is Markus' version
+2014.08.28 which is Mohamed's version
+2013.08.06 which is Thomas' version
+2013.11.11 which is Sebas' version
