@@ -94,3 +94,13 @@ GaussForHomalg/: 346da06 create a globally defined field of rationals HOMALG_MAT
 
 Versions:
  2013.09.20
+
+GradedModules/: 59cb024 BasisOfHomogeneousPart -> GeneratorsOfHomogeneousPart
+
+Versions:
+2014.08.27 which is Markus' version
+2014.09.18 which is Mohamed's version
+2011.05.05 which is Sebastian's version
+2014.07.25 which is Sepp's version
+2013.08.08 which is Sebas' version
+2014.04.09 which is Max' version
