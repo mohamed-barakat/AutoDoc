@@ -206,3 +206,13 @@ PrimaryDecomposition/: e1bd6d7 updated docu: new Singular 4.0.x permutes ideals
 Versions:
 2014.09.15 which is Mohamed's version
 2013.11.02 which is Eva Maria's version
+
+RingsForHomalg/: 9d78bd6 QuillenSuslin was missing in distribution
+
+Versions:
+2011.09.12 which is Markus L-H's version
+2011.06.16 which is Markus K's version
+2014.08.25 which is Mohamed's version
+2011.12.13 which is Andreas's version
+2012.12.11 which is Sebas' version
+2013.07.16 which is Vinay's version
