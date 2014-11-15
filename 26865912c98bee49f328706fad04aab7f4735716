@@ -200,3 +200,9 @@ PolymakeInterface/: 9471ff1 Remove VERSION.
 
 Versions:
 2014.08.29 which is Sebas' version
+
+PrimaryDecomposition/: e1bd6d7 updated docu: new Singular 4.0.x permutes ideals
+
+Versions:
+2014.09.15 which is Mohamed's version
+2013.11.02 which is Eva Maria's version
