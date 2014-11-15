@@ -234,3 +234,8 @@ SimplicialObjects/: 0c5dbd4 comply with the new GAPDoc testing methods
 
 Versions:
  2011.06.29
+
+SingularForHomalg/: 10c50c8 SI_LastOutput() -> SingularLastOutput(), SI_Errors -> SingularLastError( )
+
+Versions:
+2014.10.24 which is Mohamed's version
