@@ -125,3 +125,8 @@ HomalgToCAS/: a303b94 added missing Add( used_pointers, t ) in homalgCreateStrin
 
 Versions:
  2015.03.20
+
+IO_ForHomalg/: 019db94 increased buff_size from 2^10 to 2^16
+
+Versions:
+ 2015.03.16
