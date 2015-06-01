@@ -88,3 +88,8 @@ Gauss/: 054fe40 List( [ 1 .. ncols ], i -> 0 ) -> ListWithIdenticalEntries( ncol
 
 Versions:
  2013.06.26
+
+GaussForHomalg/: 346da06 create a globally defined field of rationals HOMALG_MATRICES.QQ
+
+Versions:
+ 2013.09.20
