@@ -263,3 +263,9 @@ ToricVarieties/: b009fec Merge branch 'mohamed-barakat-master'
 Versions:
 2014.09.01 which is Sebas' version
 2015.03.31 which is Mohamed's version
+
+VirtualCAS/: 43f3cd2 comply with the new GAPDoc testing methods
+
+Versions:
+2011.05.20 which is Andreas' version
+2012.09.21 which is Mohamed's version
