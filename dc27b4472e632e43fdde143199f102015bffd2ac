@@ -38,3 +38,8 @@ Versions:
 AutomaticDocumentation/:
 
 Versions:
+
+Blocks/: 0d5c84f IsLowerPartExtensionOfAffineSpaces now stores dim
+
+Versions:
+2015.01.15 which is Mohamed's version
