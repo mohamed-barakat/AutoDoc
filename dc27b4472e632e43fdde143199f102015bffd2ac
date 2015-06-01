@@ -83,3 +83,8 @@ Versions:
 ForgetfulFunctor/: 775fd5e GetGenerators( h ){[1..2]} -> {[1,81]}
 
 Versions:
+
+Gauss/: 054fe40 List( [ 1 .. ncols ], i -> 0 ) -> ListWithIdenticalEntries( ncols, 0 );
+
+Versions:
+ 2013.06.26
