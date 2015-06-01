@@ -130,3 +130,9 @@ IO_ForHomalg/: 019db94 increased buff_size from 2^10 to 2^16
 
 Versions:
  2015.03.16
+
+k-Points/: 2ed33fa outsourced declarations of module attributes
+
+Versions:
+2013.09.19 which is Mohamed's version
+2011.06.01 which is Alban's version
