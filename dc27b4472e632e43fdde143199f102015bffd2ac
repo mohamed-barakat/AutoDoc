@@ -120,3 +120,8 @@ Versions:
 2012.09.17 which is Markus' version
 2012.03.29 which is Sebas' version
 2014.04.07 which is Max' version
+
+HomalgToCAS/: a303b94 added missing Add( used_pointers, t ) in homalgCreateStringForExternalCASystem
+
+Versions:
+ 2015.03.20
