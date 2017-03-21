@@ -146,3 +146,8 @@ PrimaryDecomposition/: c7d7740 comply with MatricesForHomalg v2014.12.27
 Versions:
 2014.12.27 which is Mohamed's version
 2013.11.02 which is Eva Maria's version
+
+SCSCP_ForHomalg/: a41318f comply with the new GAPDoc testing methods
+
+Versions:
+ 2011.12.17
