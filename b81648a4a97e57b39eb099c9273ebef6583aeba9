@@ -103,3 +103,8 @@ Versions:
 homalg_project/: 98d5782 Get rid of GAP 4.4 compat code (closes issue #175)
 
 Versions:
+
+HomalgToCAS/: a303b94 added missing Add( used_pointers, t ) in homalgCreateStringForExternalCASystem
+
+Versions:
+ 2015.03.20
