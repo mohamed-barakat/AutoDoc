@@ -114,3 +114,10 @@ k-Points/: 2ed33fa outsourced declarations of module attributes
 Versions:
 2013.09.19 which is Mohamed's version
 2011.06.01 which is Alban's version
+
+LessGenerators/: 1b08ed5 Activated methods for OnLessGenerators
+
+Versions:
+2017.07.14 which is Mohamed's version
+2017.06.21 which is Vinay's version
+2013.11.06 which is Sebas' version
