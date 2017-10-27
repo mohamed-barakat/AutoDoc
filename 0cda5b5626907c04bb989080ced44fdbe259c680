@@ -70,3 +70,7 @@ D-Modules/: 176ce5b AnnihilatorOfPower( o, D ) -> Annihilator( o, D )
 
 Versions:
  2017.09.17
+
+ExternalGAP/:
+
+Versions:
