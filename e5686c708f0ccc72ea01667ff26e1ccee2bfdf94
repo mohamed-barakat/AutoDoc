@@ -107,3 +107,8 @@ Versions:
 homalg_project/: 24adc78b bumped versions for packages with fixes from Max to be picked
 
 Versions:
+
+HomalgToCAS/: a303b94 added missing Add( used_pointers, t ) in homalgCreateStringForExternalCASystem
+
+Versions:
+ 2015.03.20
